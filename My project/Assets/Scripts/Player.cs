@@ -1,26 +1,38 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 public class Player : MonoBehaviour
 {
     public Vector2 vec;
-    public float playerSpeed;
+    public float playerSpeed = 5f;
 
     private Rigidbody2D rb;
+    private SPUM_Prefabs spum;
 
-    private Animator animator;
-    
+    [SerializeField]
+    private VirtualJoystick joystick;
+
+    private Transform spumRoot; // ì‹¤ì œ flipì„ ì¤„ ìì‹ SPUM í”„ë¦¬íŒ¹ transform
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        animator = GetComponent<Animator>();
+        spum = GetComponentInChildren<SPUM_Prefabs>();
+        spumRoot = spum.transform; // flip ëŒ€ìƒ
     }
+
+    private void Start()
+    {
+        spum.PopulateAnimationLists();
+        spum.OverrideControllerInit();
+        spum.PlayAnimation(PlayerState.IDLE, 0);
+    }
+
     private void Update()
     {
-        vec.x = Input.GetAxisRaw("Horizontal");
-        vec.y = Input.GetAxisRaw("Vertical");
-        // maybe use GetAxisRaw ?? : ÇÃ·¹ÀÌ¾î ¿òÁ÷ÀÓÀÇ ´À³¦¿¡ µû¶ó ´Ù¸¦°Í
-
+        if (joystick != null)
+            vec = joystick.Input;
+        else
+            vec = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
     }
 
     private void FixedUpdate()
@@ -31,9 +43,19 @@ public class Player : MonoBehaviour
 
     private void LateUpdate()
     {
+        if (vec != Vector2.zero)
+        {
+            spum.PlayAnimation(PlayerState.MOVE, 0);
 
-        animator.SetFloat("Horizontal", vec.x);
-        animator.SetFloat("Vertical", vec.y);
-        animator.SetBool("Run", vec != Vector2.zero);
+            // ì¢Œìš° ì›€ì§ì„ì— ë”°ë¼ ìì‹(SPUM)ë§Œ ë°˜ì „
+            if (vec.x > 0)
+                spumRoot.localScale = new Vector3(-1, 1, 1);
+            else if (vec.x < 0)
+                spumRoot.localScale = new Vector3(1, 1, 1);
+        }
+        else
+        {
+            spum.PlayAnimation(PlayerState.IDLE, 0);
+        }
     }
 }
