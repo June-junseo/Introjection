@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0d4c3b8bcf7ebfa4e942f0f3a86582e2, type: 3}
-  m_Name: MonsterData
+  m_Name: MONSTER2
   m_EditorClassIdentifier: 
-  type: 0
-  prefab: {fileID: 7363456240152864053, guid: 3f34e2ea0c4e2434f8c801c8975fd637, type: 3}
-  maxHp: 20
-  speed: 4
-  damage: 10
-  poolSize: 100
+  type: 1
+  prefab: {fileID: 593541880334608524, guid: 3fd8801d19f516646918f911365ba91a, type: 3}
+  maxHp: 50
+  speed: 3
+  damage: 5
+  poolSize: 30
   aiPattern: 0

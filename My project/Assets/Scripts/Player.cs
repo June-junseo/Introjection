@@ -17,7 +17,7 @@ public class Player : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         spum = GetComponentInChildren<SPUM_Prefabs>();
-        spumRoot = spum.transform; // flip 대상
+        spumRoot = spum.transform; //
     }
 
     private void Start()
@@ -47,7 +47,6 @@ public class Player : MonoBehaviour
         {
             spum.PlayAnimation(PlayerState.MOVE, 0);
 
-            // 좌우 움직임에 따라 자식(SPUM)만 반전
             if (vec.x > 0)
                 spumRoot.localScale = new Vector3(-1, 1, 1);
             else if (vec.x < 0)

@@ -10,10 +10,7 @@ public class VirtualJoystick : MonoBehaviour, IDragHandler, IBeginDragHandler, I
 
     public Vector2 Input { get; private set; }
 
-    private void Update()
-    {
-        Debug.Log(Input);
-    }
+ 
     public void OnBeginDrag(PointerEventData eventData)
     {
         Debug.Log("Drag Ω√¿€");
