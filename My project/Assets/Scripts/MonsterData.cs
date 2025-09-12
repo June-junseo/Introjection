@@ -9,7 +9,6 @@ public enum MonsterType
 public enum AIPattern
 {
     Chase,
-    Zigzag,
     RangeAttack
 }
 

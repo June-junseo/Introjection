@@ -9,9 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2edc3d061d19cff46a34282892404f14, type: 3}
-  m_Name: MonsterDatabase
+  m_Script: {fileID: 11500000, guid: 0d4c3b8bcf7ebfa4e942f0f3a86582e2, type: 3}
+  m_Name: MONSTER2
   m_EditorClassIdentifier: 
-  monsters:
-  - {fileID: 11400000, guid: e31bdd0a4e8e3fb47a3dd7007cbe68ba, type: 2}
-  - {fileID: 11400000, guid: df9a3a8e8fa3c1b478987d9c6c770444, type: 2}
+  type: 1
+  prefab: {fileID: 593541880334608524, guid: 3fd8801d19f516646918f911365ba91a, type: 3}
+  maxHp: 50
+  speed: 3
+  damage: 5
+  poolSize: 30
+  aiPattern: 0
