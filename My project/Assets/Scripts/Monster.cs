@@ -20,6 +20,10 @@ public class Monster : MonoBehaviour
     private float fadeDuration = 1.0f;   
     private float fadeTimer = 0f;
 
+    private Player player;
+    public GameObject expPrefab;
+    public int expAmount = 10;
+
 
     public void Init(MonsterData data, MonsterPool pool, Rigidbody2D target)
     {
@@ -49,12 +53,7 @@ public class Monster : MonoBehaviour
         }
 
         isDead = false;
-        if (spriteRenderer != null)
-        {
-            Color c = spriteRenderer.color;
-            c.a = 1f;
-            spriteRenderer.color = c;
-        }
+
     }
 
     private void FixedUpdate()
@@ -71,10 +70,13 @@ public class Monster : MonoBehaviour
             Vector2 next = Vector2.MoveTowards(current, knockbackTarget, knockbackSpeed * Time.fixedDeltaTime);
 
             if (rb != null)
+            {
                 rb.MovePosition(next);
+            }
             else
+            {
                 transform.position = next;
-
+            }
 
             if (Vector2.Distance(next, knockbackTarget) <= knockbackTolerance)
             {
@@ -85,9 +87,12 @@ public class Monster : MonoBehaviour
         }
 
 
-        if (target == null) return;
+        if (target == null)
+        {
+            return;
+        }
 
-        Vector2 dirVec = target.position - rb.position;
+            Vector2 dirVec = target.position - rb.position;
         if (dirVec.sqrMagnitude > 0.01f)
         {
             Vector2 nextVec = dirVec.normalized * data.speed * Time.fixedDeltaTime;
@@ -161,11 +166,11 @@ public class Monster : MonoBehaviour
 
         if (hp <= 0)
         {
-            Die();
+            Die(player);
         }
     } 
 
-    public void Die()
+    public void Die(Player player)
     {
         if (isDead)
         {
@@ -177,6 +182,16 @@ public class Monster : MonoBehaviour
         if (animator != null)
         {
             animator.SetTrigger("Dead");
+        }
+
+        if(expPrefab != null)
+        {
+            GameObject expObj = Instantiate(expPrefab, transform.position, Quaternion.identity);
+            ExpItem expItem = expObj.AddComponent<ExpItem>();
+            if(expItem != null)
+            {
+                expItem.Init(expAmount, player);
+            }
         }
 
         isKnockback = false;

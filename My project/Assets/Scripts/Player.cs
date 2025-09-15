@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
@@ -11,13 +12,18 @@ public class Player : MonoBehaviour
     [SerializeField]
     private VirtualJoystick joystick;
 
-    private Transform spumRoot; // 실제 flip을 줄 자식 SPUM 프리팹 transform
+    private Transform spumRoot;
+
+    private int level = 1;
+    private int currentExp;
+    private int expToLevel;
+    public Slider slider;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         spum = GetComponentInChildren<SPUM_Prefabs>();
-        spumRoot = spum.transform; //
+        spumRoot = spum.transform; 
     }
 
     private void Start()
@@ -48,9 +54,13 @@ public class Player : MonoBehaviour
             spum.PlayAnimation(PlayerState.MOVE, 0);
 
             if (vec.x > 0)
+            {
                 spumRoot.localScale = new Vector3(-1, 1, 1);
+            }
             else if (vec.x < 0)
+            {
                 spumRoot.localScale = new Vector3(1, 1, 1);
+            }
         }
         else
         {

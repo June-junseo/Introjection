@@ -5,7 +5,7 @@ public class StaffSkill : ISkill
 {
     private SkillData data;
     private PoolManager pool;
-    private Transform parent; // 플레이어 Transform
+    private Transform parent; 
     private MonsterScanner monsterScanner;
     private float baseAttack = 100f;
     private float cooldownTimer = 0f;

@@ -12,17 +12,27 @@ public class SkillManager : MonoBehaviour
     private void Start()
     {
         if (skillDatas == null || pool == null)
+        {
             return;
+        }
 
         foreach (var skillData in skillDatas)
         {
             ISkill skill = SkillFactory.CreateSkill(skillData);
-            if (skill == null) continue;
+
+            if (skill == null)
+            {
+                continue;
+            }
 
             if (skill is StaffSkill staff)
+            {
                 staff.Init(skillData, pool, transform, scanner);
+            }
             else
+            {
                 skill.Init(skillData, pool, transform);
+            }
 
             skills.Add(skill);
         }
