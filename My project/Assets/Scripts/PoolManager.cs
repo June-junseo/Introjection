@@ -42,7 +42,10 @@ public class PoolManager : MonoBehaviour
             }
         }
 
-        if (!prefab) return null;
+        if (!prefab)
+        {
+            return null;
+        }
 
         GameObject instance = Instantiate(prefab, transform);
         pools[skillId].Add(instance);

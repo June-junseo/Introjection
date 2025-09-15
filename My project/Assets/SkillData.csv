@@ -1,6 +1,6 @@
-﻿ID,SKILL_NAME,SKILL_CATEGORY,SKILL_COOLTIME,SKILL_DURATION,SKILL_TYPE,TICK_DAMAGE_BOOL,TICK_INTERVAL,PROJECTILE_BOOL,CRITICAL_BOOL,DAMAGE_PERCENT,SKILL_RADIAL,CURRENT_LEVEL,PROJECTILE_COUNT,CRITICAL_RATE,STATUS_EFFECT,UNLOCK_CONDITION,ICON_IMAGE,SKILL_ANI_IMAGE,DESCRIPTION
-1501111001,"전사의 롱소드Lv1",1,5.0,0,1,0,0,1,1,1.50,0,1,1,0.5,0,"기본 해금","","","바라보는 방향으로 검을 휘두른다. 데미지: 150% 공격 속도: 5s"
-1501112002,"전사의 롱소드Lv2",1,5.0,0,1,0,0,1,1,1.75,0,2,1,0.5,0,"","","","바라보는 방향으로 검을 휘두른다. 데미지: 175% 공격 속도: 5s"
-1451113003,"전사의 롱소드Lv3",1,4.5,0,1,0,0,1,1,2.00,0,3,2,0.5,0,"","","","바라보는 방향으로 검을 휘두른다. 데미지: 200% 공격 속도: 4.5s"
-1402111006,"마법사의 스태프Lv1",1,4.0,4,2,1,1.0,1,1,1.00,0,1,2,0.5,0,"기본 해금","","","불타는 화염구를 날려 적들을 휩쓴다. 데미지: 100% 공격 속도: 4s"
-1302111021,"도적의 단검Lv1",1,3.0,2,2,0,0,1,1,1.20,0,1,5,0.5,0,"3스테이지 클리어","","","회전하는 단검들이 적들을 분쇄한다. 데미지: 120% 쿨타임: 3s"
+﻿ID,SKILL_NAME,SKILL_CATEGORY,SKILL_COOLTIME,SKILL_DURATION,SKILL_TYPE,TICK_DAMAGE_BOOL,TICK_INTERVAL,PROJECTILE_BOOL,CRITICAL_BOOL,DAMAGE_PERCENT,SKILL_RADIAL,CURRENT_LEVEL,PROJECTILE_COUNT,CRITICAL_RATE,STATUS_EFFECT,UNLOCK_CONDITION,ICON_IMAGE,DESCRIPTION
+1501111001,"전사의 롱소드Lv1",1,5.0,0,1,0,0,1,1,1.50,0,1,1,0.5,0,"기본 해금",,"바라보는 방향으로 검을 휘두른다. 데미지: 150% 공격 속도: 5s"
+1501112002,"전사의 롱소드Lv2",1,5.0,0,1,0,0,1,1,1.75,0,2,1,0.5,0,,,"바라보는 방향으로 검을 휘두른다. 데미지: 175% 공격 속도: 5s"
+1451113003,"전사의 롱소드Lv3",1,4.5,0,1,0,0,1,1,2.00,0,3,2,0.5,0,,,"바라보는 방향으로 검을 휘두른다. 데미지: 200% 공격 속도: 4.5s"
+1402111006,"마법사의 스태프Lv1",1,4.0,4,2,1,1.0,1,1,1.00,0,1,2,0.5,0,"기본 해금",,"불타는 화염구를 날려 적들을 휩쓴다. 데미지: 100% 공격 속도: 4s"
+1302111021,"도적의 단검Lv1",1,3.0,2,3,0,0,1,1,1.20,0,1,5,0.5,0,"3스테이지 클리어",,"회전하는 단검들이 적들을 분쇄한다. 데미지: 120% 쿨타임: 3s"

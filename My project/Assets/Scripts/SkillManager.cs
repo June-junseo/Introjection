@@ -1,25 +1,38 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class SkillManager : MonoBehaviour
 {
-    public SkillData skillData; 
+    public List<SkillData> skillDatas;
     public PoolManager pool;
+    public MonsterScanner scanner;
 
-    private ISkill currentSkill;
+    private List<ISkill> skills = new List<ISkill>();
 
     private void Start()
     {
-        if (skillData == null || pool == null)
-        {
+        if (skillDatas == null || pool == null)
             return;
-        }
 
-        currentSkill = SkillFactory.CreateSkill(skillData);
-        currentSkill?.Init(skillData, pool, transform);
+        foreach (var skillData in skillDatas)
+        {
+            ISkill skill = SkillFactory.CreateSkill(skillData);
+            if (skill == null) continue;
+
+            if (skill is StaffSkill staff)
+                staff.Init(skillData, pool, transform, scanner);
+            else
+                skill.Init(skillData, pool, transform);
+
+            skills.Add(skill);
+        }
     }
 
     private void Update()
     {
-        currentSkill?.UpdateSkill();
+        foreach (var skill in skills)
+        {
+            skill.UpdateSkill();
+        }
     }
 }

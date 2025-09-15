@@ -17,7 +17,7 @@ MonoBehaviour:
   skillCategory: 1
   cooltime: 3
   duration: 2
-  type: 2
+  type: 3
   isTickDamage: 0
   tickInterval: 0
   hasProjectile: 1
@@ -25,7 +25,7 @@ MonoBehaviour:
   damagePercent: 1.2
   range: 0
   level: 1
-  projectileCount: 30
+  projectileCount: 3
   criticalRate: 0.5
   statusEffect: 0
   unlockCondition: "3\uC2A4\uD14C\uC774\uC9C0 \uD074\uB9AC\uC5B4"

@@ -72,7 +72,7 @@ public class CSVImporter : EditorWindow
 
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
-        Debug.Log($"{template.GetType().Name} CSV 임포트 완료! 생성된 에셋 수: {createdCount}");
+        Debug.Log($"{template.GetType().Name} CSV 임포트 완료됨, 생성된 에셋 count: {createdCount}");
     }
 
     private string MakeSafeAssetName(string name)

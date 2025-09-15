@@ -7,6 +7,11 @@ public class BasicSkill : ISkill
         //none
     }
 
+    public void Init(SkillData data, PoolManager pool, Transform parent, MonsterScanner scanner)
+    {
+        throw new System.NotImplementedException();
+    }
+
     public void UpdateSkill()
     {
         // none

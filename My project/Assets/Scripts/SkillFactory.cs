@@ -1,12 +1,19 @@
+using UnityEngine;
+
 public static class SkillFactory
 {
     public static ISkill CreateSkill(SkillData data)
     {
-        if (data.projectileCount > 0)
+        switch (data.type)
         {
-            return new DaggerSkill();
+            case 1: // 롱소드
+            case 3: // 단검
+                return new DaggerSkill();
+            case 2: // 스태프
+                return new StaffSkill();
+            default:
+                Debug.LogWarning($"Unknown skill type: {data.type}");
+                return null;
         }
-
-        return null;
     }
 }

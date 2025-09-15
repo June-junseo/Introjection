@@ -7,7 +7,7 @@ public class DaggerSkill : ISkill
     private Transform parent;
     private float speed = 200f;
 
-    private float baseAttack = 100f; 
+    private float baseAttack = 30f; 
 
     public void Init(SkillData data, PoolManager pool, Transform parent)
     {
@@ -17,6 +17,11 @@ public class DaggerSkill : ISkill
         ArrangeDaggers();
     }
 
+    public void Init(SkillData data, PoolManager pool, Transform parent, MonsterScanner scanner)
+    {
+        throw new System.NotImplementedException();
+    }
+
     public void UpdateSkill()
     {
         parent.Rotate(Vector3.back * speed * Time.deltaTime);
@@ -24,7 +29,10 @@ public class DaggerSkill : ISkill
 
     private void ArrangeDaggers()
     {
-        if (data.projectileCount <= 0) return;
+        if (data.projectileCount <= 0)
+        {
+            return;
+        }
 
         float angleStep = 360f / data.projectileCount;
         float radius = 1.5f;
@@ -33,7 +41,11 @@ public class DaggerSkill : ISkill
         {
             float angle = i * angleStep;
             GameObject daggerObj = pool.Get(data.id);
-            if (!daggerObj) continue;
+
+            if (!daggerObj)
+            {
+                continue;
+            }
 
             Transform dagger = daggerObj.transform;
             dagger.SetParent(parent);
