@@ -5,7 +5,7 @@ public class DaggerSkill : ISkill
     private SkillData data;
     private PoolManager pool;
     private Transform parent;
-    private float speed = 200f;
+    private float speed = 300f;
 
     private float baseAttack = 30f; 
 
@@ -54,11 +54,13 @@ public class DaggerSkill : ISkill
             dagger.localPosition = dagger.up * radius;
 
             float finalDamage = baseAttack * data.damagePercent;
-    
+
+            Vector2 moveDir = dagger.up;
+
             Dagger daggerComponent = dagger.GetComponent<Dagger>();
             if (daggerComponent != null)
             {
-                daggerComponent.Init(finalDamage, -1);
+                daggerComponent.Init(finalDamage, -1, moveDir);
             }
         }
     }

@@ -57,8 +57,11 @@ public class Staff : MonoBehaviour
         Monster monster = collision.GetComponent<Monster>();
         if (monster != null)
         {
-            monster.TakeDamage(damage);
-            Debug.Log($"Staff가 데미지를 입힘: {damage}");
+             Vector2 knockbackDir = transform.right;
+            float knockbackDistance = 1.2f; 
+            float knockbackSpeed = 6f;
+
+            monster.TakeDamage(damage, knockbackDir, knockbackDistance, knockbackSpeed);
             gameObject.SetActive(false);
         }
     }

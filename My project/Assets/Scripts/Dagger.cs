@@ -4,22 +4,25 @@ public class Dagger : MonoBehaviour
 {
     private float damage;
     private int per;
+    private Vector2 moveDir;
 
-    public void Init(float damage, int per)
+    public void Init(float damage, int per, Vector2 dir)
     {
         this.damage = damage;
         this.per = per;
+        this.moveDir = dir.normalized;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Debug.Log($"충돌 발생: {collision.name}");
-
         Monster monster = collision.GetComponent<Monster>();
         if (monster != null)
         {
-            monster.TakeDamage(damage);
-            Debug.Log("몬스터와 충돌, 데미지 입힘");
+            Vector2 knockbackDir = moveDir;
+            float knockbackDistance = 1f;
+            float knockbackSpeed = 4f;
+
+            monster.TakeDamage(damage, knockbackDir, knockbackDistance, knockbackSpeed);
         }
     }
 }
