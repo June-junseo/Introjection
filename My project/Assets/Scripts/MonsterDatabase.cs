@@ -9,7 +9,10 @@ public class MonsterDatabase : ScriptableObject
     {
         foreach (var m in monsters)
         {
-            if (m.type == type) return m;
+            if (m.type == type)
+            {
+                return m;
+            }
         }
         return null;
     }

@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 632a3ea2da9c82b4991f8ad65d6b6498, type: 3}
+  m_Name: "\uC804\uC0AC\uC758_\uB871\uC18C\uB4DCLv2"
+  m_EditorClassIdentifier: 
+  id: 1501112002
+  skillName: "\uC804\uC0AC\uC758 \uB871\uC18C\uB4DCLv2"
+  skillCategory: 1
+  cooltime: 5
+  duration: 0
+  type: 1
+  isTickDamage: 0
+  tickInterval: 0
+  hasProjectile: 1
+  canCritical: 1
+  damagePercent: 1.75
+  range: 0
+  level: 2
+  projectileCount: 1
+  criticalRate: 0.5
+  statusEffect: 0
+  unlockCondition: 
+  iconPath: 
+  animationPath: 
+  description: "\uBC14\uB77C\uBCF4\uB294 \uBC29\uD5A5\uC73C\uB85C \uAC80\uC744 \uD718\uB450\uB978\uB2E4.
+    \uB370\uBBF8\uC9C0: 175% \uACF5\uACA9 \uC18D\uB3C4: 5s"

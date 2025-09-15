@@ -31,7 +31,11 @@ public class Reposition : MonoBehaviour
         float diffY = Mathf.Abs(playerPos.y - myPos.y);
 
         Vector3 playerDir = player.vec;
-        if (playerDir == Vector3.zero) return; 
+
+        if (playerDir == Vector3.zero)
+        {
+            return;
+        }
 
         float dirX = playerDir.x > 0 ? 1 : (playerDir.x < 0 ? -1 : 0);
         float dirY = playerDir.y > 0 ? 1 : (playerDir.y < 0 ? -1 : 0);
@@ -46,7 +50,7 @@ public class Reposition : MonoBehaviour
                 else if (diffX < diffY)
                     transform.Translate(Vector3.up * dirY * tileSize);
                 else
-                    transform.Translate(new Vector3(dirX, dirY, 0) * tileSize); // 대각선 이동 처리
+                    transform.Translate(new Vector3(dirX, dirY, 0) * tileSize); 
                 break;
 
             case "Monster":

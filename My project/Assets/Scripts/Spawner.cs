@@ -16,10 +16,10 @@ public class Spawner : MonoBehaviour
         {
             timer = 0f;
 
-            // 랜덤 몬스터 데이터 선택
+            //random monster 
             MonsterData data = database.monsters[Random.Range(0, database.monsters.Length)];
 
-            // 플레이어 주변 랜덤 위치
+            // posistion of player 
             Vector2 spawnPos = (Vector2)player.position + Random.insideUnitCircle.normalized * 10f;
 
             pool.Get(data.type, spawnPos);

@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 
@@ -31,24 +31,61 @@ public class CSVImporter : EditorWindow
     {
         if (csvFile == null || template == null)
         {
-            Debug.LogError("CSV ÆÄÀÏ°ú ÅÛÇÃ¸´ SO¸¦ ¼³Á¤ÇÏ¼¼¿ä.");
+            Debug.LogError("CSV íŒŒì¼ê³¼ í…œí”Œë¦¿ SOë¥¼ ì„¤ì •í•˜ì„¸ìš”.");
             return;
         }
 
         List<string[]> rows = CSVReader.Read(AssetDatabase.GetAssetPath(csvFile));
-        if (rows.Count < 2) return; // ÃÖ¼Ò 2ÁÙ ÀÌ»ó (Çì´õ + µ¥ÀÌÅÍ)
+        if (rows.Count < 2)
+        {
+            Debug.LogWarning("CSV ë°ì´í„°ê°€ ì—†ìŠµë‹ˆë‹¤.");
+            return;
+        }
+
+        int createdCount = 0;
 
         for (int i = 1; i < rows.Count; i++)
         {
-            ScriptableObject obj = ScriptableObject.CreateInstance(template.GetType());
-            (obj as ICSVImportable)?.ImportFromCSV(rows[i]);
+            var row = rows[i];
 
-            string assetPath = $"{assetFolder}/{rows[i][0]}.asset";
+            if (row.Length < 2)
+            {
+                Debug.LogWarning($"CSV {i + 1}í–‰: ì»¬ëŸ¼ì´ ë¶€ì¡±í•©ë‹ˆë‹¤. ê±´ë„ˆëœë‹ˆë‹¤.");
+                continue;
+            }
+
+            for (int j = 0; j < row.Length; j++)
+            {
+                if (string.IsNullOrEmpty(row[j]))
+                    row[j] = string.Empty;
+            }
+
+            ScriptableObject obj = ScriptableObject.CreateInstance(template.GetType());
+            (obj as ICSVImportable)?.ImportFromCSV(row);
+
+            string safeName = MakeSafeAssetName(row[1]);
+            string assetPath = $"{assetFolder}/{safeName}.asset";
+
             AssetDatabase.CreateAsset(obj, assetPath);
+            createdCount++;
         }
 
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
-        Debug.Log($"{template.GetType().Name} CSV ÀÓÆ÷Æ® ¿Ï·á!");
+        Debug.Log($"{template.GetType().Name} CSV ì„í¬íŠ¸ ì™„ë£Œ! ìƒì„±ëœ ì—ì…‹ ìˆ˜: {createdCount}");
+    }
+
+    private string MakeSafeAssetName(string name)
+    {
+        if (string.IsNullOrEmpty(name))
+            return "Unnamed";
+
+        foreach (char c in System.IO.Path.GetInvalidFileNameChars())
+            name = name.Replace(c, '_');
+
+        name = name.Replace(' ', '_');
+        name = name.Trim('_');
+
+        return name;
     }
 }

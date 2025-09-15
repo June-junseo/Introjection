@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class Dagger : MonoBehaviour
 {
-    public float damage;
-    public int per;
+    private float damage;
+    private int per;
 
     public void Init(float damage, int per)
     {
@@ -19,7 +19,7 @@ public class Dagger : MonoBehaviour
         if (monster != null)
         {
             monster.TakeDamage(damage);
-            Debug.Log("몬스터와 충돌해서 데미지 입힘");
+            Debug.Log("몬스터와 충돌, 데미지 입힘");
         }
     }
 }

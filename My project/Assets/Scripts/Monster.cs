@@ -29,20 +29,25 @@ public class Monster : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-        spriteRenderer = GetComponent<SpriteRenderer>(); // flipX를 위해 필요
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     private void OnEnable()
     {
         if (data != null)
+        {
             hp = data.maxHp;
+        }
     }
 
     private void FixedUpdate()
     {
-        if (target == null) return;
+        if (target == null)
+        {
+            return;
+        }
 
-        Vector2 dirVec = target.position - rb.position;
+            Vector2 dirVec = target.position - rb.position;
 
         if (dirVec.sqrMagnitude > 0.01f)
         {
@@ -52,7 +57,9 @@ public class Monster : MonoBehaviour
             animator.SetBool("isWalking", true);
 
             if (dirVec.x != 0)
+            {
                 spriteRenderer.flipX = dirVec.x < 0;
+            }
         }
         else
         {
