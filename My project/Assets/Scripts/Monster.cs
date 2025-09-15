@@ -16,6 +16,10 @@ public class Monster : MonoBehaviour
     private float knockbackSpeed = 5f;
     private float knockbackTolerance = 0.05f;
 
+    private bool isDead = false;
+    private float fadeDuration = 1.0f;   
+    private float fadeTimer = 0f;
+
 
     public void Init(MonsterData data, MonsterPool pool, Rigidbody2D target)
     {
@@ -40,11 +44,27 @@ public class Monster : MonoBehaviour
     private void OnEnable()
     {
         if (data != null)
+        {
             hp = data.maxHp;
+        }
+
+        isDead = false;
+        if (spriteRenderer != null)
+        {
+            Color c = spriteRenderer.color;
+            c.a = 1f;
+            spriteRenderer.color = c;
+        }
     }
 
     private void FixedUpdate()
     {
+
+        if (isDead)
+        {
+            HandleFade();
+            return;
+        }
         if (isKnockback)
         {
             Vector2 current = rb != null ? rb.position : (Vector2)transform.position;
@@ -81,6 +101,25 @@ public class Monster : MonoBehaviour
         else
         {
             animator?.SetBool("isWalking", false);
+        }
+    }
+
+    private void HandleFade()
+    {
+        if (fadeTimer > 0f)
+        {
+            fadeTimer -= Time.fixedDeltaTime;
+
+            if (spriteRenderer != null)
+            {
+                Color c = spriteRenderer.color;
+                c.a = Mathf.Clamp01(fadeTimer / fadeDuration);
+                spriteRenderer.color = c;
+            }
+        }
+        else
+        {
+            pool.Return(data.type, gameObject);
         }
     }
 
@@ -124,10 +163,23 @@ public class Monster : MonoBehaviour
         {
             Die();
         }
-    }
+    } 
 
     public void Die()
     {
-        pool.Return(data.type, gameObject);
+        if (isDead)
+        {
+            return;
+        }
+
+            isDead = true;
+
+        if (animator != null)
+        {
+            animator.SetTrigger("Dead");
+        }
+
+        isKnockback = false;
+        fadeTimer = fadeDuration;
     }
 }
