@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class ExpItem : MonoBehaviour
 {
-    private int expValue;
+    private int expValue = 1;
     private Player player;
     private float speed = 3f;
     private bool isCollected = false;
@@ -32,6 +32,7 @@ public class ExpItem : MonoBehaviour
     private void Collect()
     {
         isCollected = true;
+        player.AddExp(expValue);
         //플레이어 levelUp 코드 나중에 
         Destroy(gameObject);
 

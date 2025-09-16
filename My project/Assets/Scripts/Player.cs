@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Unity.VisualScripting;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class Player : MonoBehaviour
@@ -14,16 +15,35 @@ public class Player : MonoBehaviour
 
     private Transform spumRoot;
 
+    public event System.Action<float, float, int> onExpChanged;
+
     private int level = 1;
-    private int currentExp;
-    private int expToLevel;
-    public Slider slider;
+    private float currentExp;
+    private float expToLevel;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         spum = GetComponentInChildren<SPUM_Prefabs>();
         spumRoot = spum.transform; 
+    }
+
+    public void AddExp(float amount)
+    {
+        currentExp += amount;
+        if(currentExp >= expToLevel)
+        {
+            LevelUp();
+        }
+
+        onExpChanged?.Invoke(expToLevel, expToLevel, level);
+    }
+
+    private void LevelUp()
+    {
+        currentExp -= expToLevel;
+        level++;
+        expToLevel = (int)Mathf.Round(3 + Mathf.Pow(level, 1.4f));
     }
 
     private void Start()
