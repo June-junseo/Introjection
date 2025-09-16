@@ -1,3 +1,4 @@
+using System.Threading;
 using UnityEngine;
 
 public class Monster : MonoBehaviour
@@ -22,7 +23,6 @@ public class Monster : MonoBehaviour
 
     private Player player;
     public GameObject expPrefab;
-    public int expAmount = 10;
 
 
     public void Init(MonsterData data, MonsterPool pool, Rigidbody2D target)
@@ -190,7 +190,7 @@ public class Monster : MonoBehaviour
             ExpItem expItem = expObj.AddComponent<ExpItem>();
             if(expItem != null)
             {
-                expItem.Init(expAmount, player);
+                expItem.Init(player);
             }
         }
 

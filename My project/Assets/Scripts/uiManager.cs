@@ -12,13 +12,18 @@ public class uiManager : MonoBehaviour
 
     private void Start()
     {
-        
+        player.onExpChanged += UpdateUi;
     }
 
-    private void UpdateUi(float currentExp, float expToLevel, int level)
+    private void UpdateUi(int currentExp, int expToLevel, int level)
     {
-        slider.value = currentExp / expToLevel;
-        levelUpText.text = $"Level";
+        slider.value = (float)currentExp / expToLevel;
+
+        sb.Clear();
+        sb.Append("Level ");
+        sb.Append(level);
+        levelUpText.text = sb.ToString();
     }
+
 
 }

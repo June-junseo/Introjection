@@ -15,35 +15,44 @@ public class Player : MonoBehaviour
 
     private Transform spumRoot;
 
-    public event System.Action<float, float, int> onExpChanged;
+    public event System.Action<int, int, int> onExpChanged;
 
     private int level = 1;
-    private float currentExp;
-    private float expToLevel;
+    private int currentExp = 0;
+    private int expToLevel;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         spum = GetComponentInChildren<SPUM_Prefabs>();
-        spumRoot = spum.transform; 
+        spumRoot = spum.transform;
+
+        level = 1;
+        currentExp = 0;
+        expToLevel = CalculateExpToNextLevel(level);
     }
 
-    public void AddExp(float amount)
+    public void AddExp(int amount)
     {
         currentExp += amount;
-        if(currentExp >= expToLevel)
+
+        if (currentExp >= expToLevel)
         {
+            currentExp -= expToLevel;
             LevelUp();
         }
 
-        onExpChanged?.Invoke(expToLevel, expToLevel, level);
+        onExpChanged?.Invoke(currentExp, expToLevel, level);
     }
 
     private void LevelUp()
     {
-        currentExp -= expToLevel;
         level++;
-        expToLevel = (int)Mathf.Round(3 + Mathf.Pow(level, 1.4f));
+        expToLevel = CalculateExpToNextLevel(level);
+    }
+    private int CalculateExpToNextLevel(int lvl)
+    {
+        return Mathf.Max(1, Mathf.RoundToInt(3 + Mathf.Pow(lvl, 1.4f)));
     }
 
     private void Start()
@@ -56,9 +65,13 @@ public class Player : MonoBehaviour
     private void Update()
     {
         if (joystick != null)
+        {
             vec = joystick.Input;
+        }
         else
+        {
             vec = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+        }
     }
 
     private void FixedUpdate()
