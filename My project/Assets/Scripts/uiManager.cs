@@ -20,7 +20,7 @@ public class uiManager : MonoBehaviour
         slider.value = (float)currentExp / expToLevel;
 
         sb.Clear();
-        sb.Append("Level ");
+        sb.Append("Lv ");
         sb.Append(level);
         levelUpText.text = sb.ToString();
     }

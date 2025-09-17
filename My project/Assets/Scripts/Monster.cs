@@ -209,4 +209,14 @@ public class Monster : MonoBehaviour
         isKnockback = false;
         fadeTimer = fadeDuration;
     }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        Player player = collision.GetComponent<Player>();
+        if (player != null && data != null)  
+        {
+            player.TakeDamage(data.damage);
+        }
+
+    }
 }

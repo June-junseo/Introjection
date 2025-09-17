@@ -9,6 +9,7 @@ public class Player : MonoBehaviour
 
     private Rigidbody2D rb;
     private SPUM_Prefabs spum;
+    private Monster monster;
 
     [SerializeField]
     private VirtualJoystick joystick;
@@ -20,6 +21,9 @@ public class Player : MonoBehaviour
     private int level = 1;
     private int currentExp = 0;
     private int expToLevel;
+    private float maxHp = 50f;
+    private float currentHp;
+    private bool isDead = false;
 
     public SelectSkillUi skillUi;
 
@@ -33,6 +37,7 @@ public class Player : MonoBehaviour
         currentExp = 0;
         expToLevel = CalculateExpToNextLevel(level);
     }
+
 
     public void AddExp(int amount)
     {
@@ -60,6 +65,8 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
+        currentHp = maxHp;
+        isDead = false;
         spum.PopulateAnimationLists();
         spum.OverrideControllerInit();
         spum.PlayAnimation(PlayerState.IDLE, 0);
@@ -102,5 +109,28 @@ public class Player : MonoBehaviour
         {
             spum.PlayAnimation(PlayerState.IDLE, 0);
         }
+    }
+
+    public void TakeDamage(float damage)
+    {
+        currentHp -= damage;
+        Debug.Log($"플레이어 데미지 입음 {damage}");
+        spum.PlayAnimation(PlayerState.DAMAGED, 0);
+
+        if (currentHp <= 0)
+        {
+            Die();
+        }
+    }
+
+    public void Die()
+    {
+        if (isDead)
+        {
+            return;
+        }
+
+        isDead = true;
+        spum.PlayAnimation(PlayerState.DEATH, 0);
     }
 }

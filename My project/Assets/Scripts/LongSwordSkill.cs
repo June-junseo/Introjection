@@ -6,7 +6,7 @@ public class LongSwordSkill : ISkill
     private PoolManager pool;
     private Transform parent;
     private Player player;
-    private float baseAttack = 100f;
+    private float baseAttack = 10f;
     private float cooldownTimer = 0f;
 
     public void Init(SkillData data, PoolManager pool, Transform parent)
