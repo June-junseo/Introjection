@@ -15,7 +15,7 @@ MonoBehaviour:
   type: 1
   prefab: {fileID: 593541880334608524, guid: 3fd8801d19f516646918f911365ba91a, type: 3}
   maxHp: 50
-  speed: 3
+  speed: 1
   damage: 5
   poolSize: 30
   aiPattern: 0

@@ -15,15 +15,15 @@ public class PoolManager : MonoBehaviour
         }
     }
 
-    public GameObject Get(int skillId)
+    public GameObject Get(int id)
     {
-        if (!pools.ContainsKey(skillId))
+        if (!pools.ContainsKey(id))
         {
-            Debug.LogWarning($"Pool에 존재하지 않는 skillId: {skillId}");
+            Debug.LogWarning($"Pool에 존재하지 않는 id: {id}");
             return null;
         }
 
-        foreach (var obj in pools[skillId])
+        foreach (var obj in pools[id])
         {
             if (!obj.activeSelf)
             {
@@ -35,7 +35,7 @@ public class PoolManager : MonoBehaviour
         GameObject prefab = null;
         foreach (var p in prefabs)
         {
-            if (p.GetComponent<SkillPrefabID>().id == skillId)
+            if (p.GetComponent<SkillPrefabID>().id == id)
             {
                 prefab = p;
                 break;
@@ -48,8 +48,13 @@ public class PoolManager : MonoBehaviour
         }
 
         GameObject instance = Instantiate(prefab, transform);
-        pools[skillId].Add(instance);
+        pools[id].Add(instance);
         instance.SetActive(true);
         return instance;
+    }
+
+    public void Release(GameObject obj)
+    {
+        obj.SetActive(false);
     }
 }

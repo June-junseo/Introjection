@@ -37,14 +37,8 @@ public class Staff : MonoBehaviour
 
     private void Update()
     {
-        if (target != null)
-        {
-            direction = (target.position - transform.position).normalized;
-            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
-        }
-
         transform.position += direction * speed * Time.deltaTime;
+
 
         if (Vector3.Distance(startPos, transform.position) >= maxDistance)
         {
@@ -57,7 +51,7 @@ public class Staff : MonoBehaviour
         Monster monster = collision.GetComponent<Monster>();
         if (monster != null)
         {
-             Vector2 knockbackDir = transform.right;
+            Vector2 knockbackDir = transform.right;
             float knockbackDistance = 1.2f; 
             float knockbackSpeed = 6f;
 

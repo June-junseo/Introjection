@@ -4,7 +4,8 @@ using UnityEngine;
 public class MonsterPool : MonoBehaviour
 {
     public MonsterDatabase database;
-    public Rigidbody2D playerTarget; 
+    public Rigidbody2D playerTarget;
+    public PoolManager poolManager;
 
     private Dictionary<MonsterType, Queue<GameObject>> poolDict = new();
 
@@ -20,7 +21,7 @@ public class MonsterPool : MonoBehaviour
                 obj.SetActive(false);
 
                 Monster monster = obj.GetComponent<Monster>();
-                monster.Init(data, this, playerTarget);
+                monster.Init(data, this, playerTarget, poolManager);
 
                 queue.Enqueue(obj);
             }
@@ -43,7 +44,7 @@ public class MonsterPool : MonoBehaviour
         obj.transform.position = position;
         obj.SetActive(true);
 
-        obj.GetComponent<Monster>().Init(database.GetData(type), this, playerTarget);
+        obj.GetComponent<Monster>().Init(database.GetData(type), this, playerTarget, poolManager);
 
         return obj;
     }

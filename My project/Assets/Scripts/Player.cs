@@ -21,6 +21,8 @@ public class Player : MonoBehaviour
     private int currentExp = 0;
     private int expToLevel;
 
+    public SelectSkillUi skillUi;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -49,6 +51,7 @@ public class Player : MonoBehaviour
     {
         level++;
         expToLevel = CalculateExpToNextLevel(level);
+        skillUi.OpenUi();
     }
     private int CalculateExpToNextLevel(int lvl)
     {

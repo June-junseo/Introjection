@@ -5,44 +5,44 @@ public class SkillManager : MonoBehaviour
 {
     public List<SkillData> skillDatas;
     public PoolManager pool;
-    public MonsterScanner scanner;
+    //public MonsterScanner scanner;
 
     private List<ISkill> skills = new List<ISkill>();
+    private ISkill basicSkill;
 
     private void Start()
     {
-        if (skillDatas == null || pool == null)
-        {
+        if (skillDatas == null || skillDatas.Count == 0 || pool == null)
             return;
-        }
 
-        foreach (var skillData in skillDatas)
-        {
-            ISkill skill = SkillFactory.CreateSkill(skillData);
-
-            if (skill == null)
-            {
-                continue;
-            }
-
-            if (skill is StaffSkill staff)
-            {
-                staff.Init(skillData, pool, transform, scanner);
-            }
-            else
-            {
-                skill.Init(skillData, pool, transform);
-            }
-
-            skills.Add(skill);
-        }
+        ISkill firstSkill = SkillFactory.CreateSkill(skillDatas[0]);
+        firstSkill.Init(skillDatas[0], pool, transform);
+        skills.Add(firstSkill);
+        basicSkill = firstSkill;
     }
 
     private void Update()
     {
-        foreach (var skill in skills)
+        if(basicSkill != null)
         {
-            skill.UpdateSkill();
+            basicSkill.UpdateSkill();
+        }
+
+        for (int i = 0; i < skills.Count; i++)
+        {
+            skills[i].UpdateSkill();
         }
     }
+
+    public void AddSkills(SkillData newSkillData)
+    {
+        ISkill newSkill = SkillFactory.CreateSkill(newSkillData);
+
+        newSkill.Init(newSkillData, pool, transform);
+        skills.Add(newSkill);
+
+        Debug.Log("½ºÅ³ Ãß°¡µÊ");
+    }
+
+    
 }

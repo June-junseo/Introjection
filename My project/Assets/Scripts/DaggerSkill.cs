@@ -16,12 +16,6 @@ public class DaggerSkill : ISkill
         this.parent = parent;
         ArrangeDaggers();
     }
-
-    public void Init(SkillData data, PoolManager pool, Transform parent, MonsterScanner scanner)
-    {
-        throw new System.NotImplementedException();
-    }
-
     public void UpdateSkill()
     {
         parent.Rotate(Vector3.back * speed * Time.deltaTime);

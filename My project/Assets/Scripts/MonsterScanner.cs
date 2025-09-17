@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class MonsterScanner : MonoBehaviour
 {
-    public float scanDistance = 10f;
+    public float scanDistance = 5f;
     public LayerMask monsterLayer;
     public int maxScanCount = 4;
 

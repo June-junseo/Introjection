@@ -7,6 +7,7 @@ public static class SkillFactory
         switch (data.type)
         {
             case 1: // 롱소드
+                return new LongSwordSkill();
             case 3: // 단검
                 return new DaggerSkill();
             case 2: // 스태프

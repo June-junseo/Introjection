@@ -6,10 +6,16 @@ public class ExpItem : MonoBehaviour
     private float speed = 1f;
     private Player player;
     private bool isCollected = false;
+    private PoolManager pool;
 
-    public void Init(Player player)
+    public void Init(Player player, PoolManager pool)
     {
         this.player = player;
+        this.pool = pool;
+        isCollected = false;
+        gameObject.SetActive(true);
+        Collider2D col = GetComponent<Collider2D>();
+        if (col != null) col.enabled = true;
     }
 
     private void Update()
@@ -30,21 +36,22 @@ public class ExpItem : MonoBehaviour
             return;
         }
 
+        Debug.Log("ExpItem Trigger: " + collision.name);
+
         Player p = collision.GetComponent<Player>();
         if (p != null)
         {
             Collect(p);
         }
-
     }
 
     private void Collect(Player player)
     {
         isCollected = true;
+        Collider2D col = GetComponent<Collider2D>();
+        if (col != null) col.enabled = false;
         player.AddExp(expValue);
-        Destroy(gameObject);
+
+        pool.Release(gameObject);
     }
-
-
-
 }

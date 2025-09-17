@@ -24,12 +24,15 @@ public class Monster : MonoBehaviour
     private Player player;
     public GameObject expPrefab;
 
+    private PoolManager poolManager;
 
-    public void Init(MonsterData data, MonsterPool pool, Rigidbody2D target)
+
+    public void Init(MonsterData data, MonsterPool pool, Rigidbody2D target, PoolManager poolManager)
     {
         this.data = data;
         this.pool = pool;
         this.target = target;
+        this.poolManager = poolManager;
         hp = data.maxHp;
     }
 
@@ -53,6 +56,13 @@ public class Monster : MonoBehaviour
         }
 
         isDead = false;
+
+        if (spriteRenderer != null)
+        {
+            Color c = spriteRenderer.color;
+            c.a = 1f;
+            spriteRenderer.color = c;
+        }
 
     }
 
@@ -184,15 +194,17 @@ public class Monster : MonoBehaviour
             animator.SetTrigger("Dead");
         }
 
-        if(expPrefab != null)
+        if (expPrefab != null && poolManager != null)
         {
-            GameObject expObj = Instantiate(expPrefab, transform.position, Quaternion.identity);
-            ExpItem expItem = expObj.AddComponent<ExpItem>();
-            if(expItem != null)
+            GameObject expObj = poolManager.Get(expPrefab.GetComponent<SkillPrefabID>().id);
+            expObj.transform.position = transform.position;
+            ExpItem expItem = expObj.GetComponent<ExpItem>();
+            if (expItem != null)
             {
-                expItem.Init(player);
+                expItem.Init(player, poolManager);
             }
         }
+
 
         isKnockback = false;
         fadeTimer = fadeDuration;
