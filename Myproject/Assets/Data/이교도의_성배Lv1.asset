@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 632a3ea2da9c82b4991f8ad65d6b6498, type: 3}
+  m_Name: "\uC774\uAD50\uB3C4\uC758_\uC131\uBC30Lv1"
+  m_EditorClassIdentifier: 
+  id: 1000411126
+  skillName: "\uC774\uAD50\uB3C4\uC758 \uC131\uBC30Lv1"
+  skillCategory: 1
+  cooltime: 0
+  duration: 4
+  type: 4
+  isTickDamage: 1
+  tickInterval: 1
+  hasProjectile: 1
+  canCritical: 1
+  damagePercent: 1.3
+  range: 3
+  level: 1
+  projectileCount: 0
+  criticalRate: 0.5
+  statusEffect: 0
+  unlockCondition: "4\uC2A4\uD14C\uC774\uC9C0 \uD074\uB9AC\uC5B4"
+  iconPath: 
+  description: 
