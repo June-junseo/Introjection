@@ -59,8 +59,10 @@ public class SelectSkillUi : MonoBehaviour
         for (int i = 0; i < count; i++)
         {
             int idx = Random.Range(0, pool.Count);
-            currentSkills.Add(pool[idx]);
-            pool.RemoveAt(idx);
+            SkillData picked = pool[idx];
+
+            currentSkills.Add(picked);
+            pool.RemoveAt(idx);   
         }
 
         UpdateButton(button1, 0);
@@ -73,7 +75,8 @@ public class SelectSkillUi : MonoBehaviour
         if (idx < currentSkills.Count)
         {
             btn.gameObject.SetActive(true);
-            btn.GetComponentInChildren<TMP_Text>().text = currentSkills[idx].skillName;
+            var skill = currentSkills[idx];
+            btn.GetComponentInChildren<TMP_Text>().text = $"{skill.skillName} Lv.{skill.level}";
         }
         else
         {
