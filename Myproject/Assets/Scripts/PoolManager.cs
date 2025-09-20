@@ -10,7 +10,6 @@ public class PoolManager : MonoBehaviour
     {
         foreach (var prefab in prefabs)
         {
-            // SkillPrefabID 지원
             var skillIdComp = prefab.GetComponent<SkillPrefabID>();
             if (skillIdComp != null)
             {
@@ -20,7 +19,6 @@ public class PoolManager : MonoBehaviour
                 }
             }
 
-            // itemPrefabId 지원
             var itemIdComp = prefab.GetComponent<itemPrefabId>();
             if (itemIdComp != null)
             {
@@ -38,7 +36,6 @@ public class PoolManager : MonoBehaviour
             return null;
         }
 
-        // 비활성 객체 재사용
         foreach (var obj in pools[id])
         {
             if (!obj.activeSelf)
@@ -48,7 +45,6 @@ public class PoolManager : MonoBehaviour
             }
         }
 
-        // prefab 찾기 (SkillPrefabID 또는 itemPrefabId 둘 다 검사)
         GameObject prefab = null;
         foreach (var p in prefabs)
         {

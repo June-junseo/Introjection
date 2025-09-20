@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [System.Serializable]
-[CreateAssetMenu(fileName = "SkillDataFile", menuName = "Game/Skill Data")]
+[CreateAssetMenu(fileName = "SkillDatasFile", menuName = "Game/Skill Data")]
 public class SkillData : ScriptableObject, ICSVImportable
 {
     public int id;
@@ -9,6 +9,7 @@ public class SkillData : ScriptableObject, ICSVImportable
     public int skillCategory;
     public float cooltime;
     public float duration;
+    public string skillGroup;
     public int type;
     public bool isTickDamage;
     public float tickInterval;
@@ -24,8 +25,6 @@ public class SkillData : ScriptableObject, ICSVImportable
     public string iconPath;
     public string description;
 
-    public GameObject skillPrefab;
-
     public void ImportFromCSV(string[] cols)
     {
         id = ToInt(cols[0]);
@@ -33,23 +32,24 @@ public class SkillData : ScriptableObject, ICSVImportable
         skillCategory = ToInt(cols[2]);
         cooltime = ToFloat(cols[3]);
         duration = ToFloat(cols[4]);
-        type = ToInt(cols[5]);
-        isTickDamage = ToBool(cols[6]);
-        tickInterval = ToFloat(cols[7]);
-        hasProjectile = ToBool(cols[8]);
-        canCritical = ToBool(cols[9]);
-        damagePercent = ToFloat(cols[10]);
-        range = ToFloat(cols[11]);
-        level = ToInt(cols[12]);
-        projectileCount = ToInt(cols[13]);
-        criticalRate = ToFloat(cols[14]);
-        statusEffect = ToInt(cols[15]);
-        unlockCondition = cols[16];
-        iconPath = cols[17];
-        description = cols.Length > 19 ? cols[18] : "";
+        skillGroup = cols[5];
+        type = ToInt(cols[6]);
+        isTickDamage = ToBool(cols[7]);
+        tickInterval = ToFloat(cols[8]);
+        hasProjectile = ToBool(cols[9]);
+        canCritical = ToBool(cols[10]);
+        damagePercent = ToFloat(cols[11]);
+        range = ToFloat(cols[12]);
+        level = ToInt(cols[13]);
+        projectileCount = ToInt(cols[14]);
+        criticalRate = ToFloat(cols[15]);
+        statusEffect = ToInt(cols[16]);
+        unlockCondition = cols[17];
+        iconPath = cols[18];
+        description = cols.Length > 20 ? cols[19] : "";
 
     }
-
+  
     private int ToInt(string s, int defaultValue = 0)
     {
         if (string.IsNullOrWhiteSpace(s)) return defaultValue;

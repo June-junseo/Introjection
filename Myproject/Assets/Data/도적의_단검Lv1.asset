@@ -17,6 +17,7 @@ MonoBehaviour:
   skillCategory: 1
   cooltime: 2
   duration: 2
+  skillGroup: DAGGER
   type: 2
   isTickDamage: 0
   tickInterval: 0
@@ -31,4 +32,4 @@ MonoBehaviour:
   unlockCondition: "3\uC2A4\uD14C\uC774\uC9C0 \uD074\uB9AC\uC5B4"
   iconPath: 
   description: 
-  levelPrefabIDs: 00000000
+  skillPrefab: {fileID: 0}

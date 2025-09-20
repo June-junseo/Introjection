@@ -9,7 +9,7 @@ public class SelectSkillUi : MonoBehaviour
     public Button button1, button2, button3;
     public SkillManager skillManager;
 
-    private List<SkillData> currentSkills = new List<SkillData>();
+    private List<SkillData> availableSkills = new List<SkillData>();
 
     private void Start()
     {
@@ -34,12 +34,12 @@ public class SelectSkillUi : MonoBehaviour
 
     private void PickSkillsForLevelUp()
     {
-        currentSkills.Clear();
+        availableSkills.Clear();
         List<SkillData> pool = new List<SkillData>();
 
         foreach (var data in skillManager.skillDatas)
         {
-            SkillData current = skillManager.GetCurrentSkill(data.skillName);
+            SkillData current = skillManager.GetCurrentSkill(data.skillGroup);
 
             if (current != null)
             {
@@ -55,14 +55,23 @@ public class SelectSkillUi : MonoBehaviour
             }
         }
 
+        Dictionary<string, SkillData> uniquePool = new Dictionary<string, SkillData>();
+        foreach (var s in pool)
+        {
+            if (!uniquePool.ContainsKey(s.skillGroup))
+            {
+                uniquePool.Add(s.skillGroup, s);
+            }
+        }
+
+        pool = new List<SkillData>(uniquePool.Values);
+
         int count = Mathf.Min(3, pool.Count);
         for (int i = 0; i < count; i++)
         {
             int idx = Random.Range(0, pool.Count);
-            SkillData picked = pool[idx];
-
-            currentSkills.Add(picked);
-            pool.RemoveAt(idx);   
+            availableSkills.Add(pool[idx]);
+            pool.RemoveAt(idx);
         }
 
         UpdateButton(button1, 0);
@@ -70,12 +79,13 @@ public class SelectSkillUi : MonoBehaviour
         UpdateButton(button3, 2);
     }
 
+
     private void UpdateButton(Button btn, int idx)
     {
-        if (idx < currentSkills.Count)
+        if (idx < availableSkills.Count)
         {
             btn.gameObject.SetActive(true);
-            var skill = currentSkills[idx];
+            var skill = availableSkills[idx];
             btn.GetComponentInChildren<TMP_Text>().text = $"{skill.skillName} Lv.{skill.level}";
         }
         else
@@ -86,12 +96,12 @@ public class SelectSkillUi : MonoBehaviour
 
     private void OnSkillClicked(int index)
     {
-        if (index >= currentSkills.Count)
+        if (index >= availableSkills.Count)
         {
             return;
         }
 
-        skillManager.AddSkill(currentSkills[index]); 
+        skillManager.AddSkill(availableSkills[index]);
         CloseUi();
     }
 }

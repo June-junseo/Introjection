@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 3884262058930964626}
   - component: {fileID: 105126023900170050}
   - component: {fileID: 4464674664509114037}
-  - component: {fileID: 4928062867471077885}
   m_Layer: 6
   m_Name: monster2
   m_TagString: Monster
@@ -128,7 +127,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   expPrefab: {fileID: 4733465319496568917, guid: e5ebfd8ddfa9edf4cb00cf7d3f6181c1, type: 3}
-  expAmount: 10
 --- !u!61 &105126023900170050
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -202,19 +200,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!114 &4928062867471077885
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 593541880334608524}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e52d7be4af5c5d74789a579b4fb673e2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player: {fileID: 0}
 --- !u!1001 &9176009478865066501
 PrefabInstance:
   m_ObjectHideFlags: 0

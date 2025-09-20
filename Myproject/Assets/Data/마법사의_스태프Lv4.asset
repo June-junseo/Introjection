@@ -17,6 +17,7 @@ MonoBehaviour:
   skillCategory: 1
   cooltime: 1.2
   duration: 4
+  skillGroup: STAFF
   type: 2
   isTickDamage: 1
   tickInterval: 1
@@ -31,3 +32,4 @@ MonoBehaviour:
   unlockCondition: 
   iconPath: 
   description: 
+  skillPrefab: {fileID: 0}

@@ -17,6 +17,7 @@ MonoBehaviour:
   skillCategory: 2
   cooltime: 0
   duration: 0
+  skillGroup: ROSARIO
   type: 3
   isTickDamage: 1
   tickInterval: 0.3
@@ -31,3 +32,4 @@ MonoBehaviour:
   unlockCondition: 
   iconPath: 
   description: 
+  skillPrefab: {fileID: 0}

@@ -17,6 +17,7 @@ MonoBehaviour:
   skillCategory: 1
   cooltime: 3
   duration: 3
+  skillGroup: BOW
   type: 2
   isTickDamage: 0
   tickInterval: 0
@@ -31,3 +32,4 @@ MonoBehaviour:
   unlockCondition: "1\uC2A4\uD14C\uC774\uC9C0 \uD074\uB9AC\uC5B4"
   iconPath: 
   description: 
+  skillPrefab: {fileID: 0}

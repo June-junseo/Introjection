@@ -230,7 +230,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 256
   m_textAlignment: 65535
@@ -7097,7 +7097,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -787.8688, y: 370.51297}
+  m_AnchoredPosition: {x: 51, y: 416}
   m_SizeDelta: {x: -1956.0929, y: -911.0749}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &448765573
@@ -7171,10 +7171,10 @@ RectTransform:
   - {fileID: 1464558699}
   m_Father: {fileID: 1935119876}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 458.85}
-  m_SizeDelta: {x: 0.00024414, y: -917.7}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: -21.36}
+  m_SizeDelta: {x: 1231.65, y: 75.7}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &513000033
 MonoBehaviour:
@@ -21854,7 +21854,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 716.5, y: -77.6}
+  m_AnchoredPosition: {x: 163.1, y: -132.1}
   m_SizeDelta: {x: 979.1, y: 63}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1464558700
@@ -28923,8 +28923,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillDatas:
   - {fileID: 11400000, guid: a5a238a284760754cb77e8d8ea100d7c, type: 2}
+  - {fileID: 11400000, guid: 81edf76a97d1e6a4ba99564ba8689782, type: 2}
+  - {fileID: 11400000, guid: 80c9ce490d9bc6b4e9dc8a2e74684ec5, type: 2}
+  - {fileID: 11400000, guid: 9cb17a5f673ae5e48bbe04aead3708e1, type: 2}
+  - {fileID: 11400000, guid: 7dc7002709c9f4b40828c71987e80199, type: 2}
   - {fileID: 11400000, guid: 2da64f82e9cd56346a03d8ad82984d9d, type: 2}
+  - {fileID: 11400000, guid: 9b247ae1314cbbc49a4f75cdc75fc4c6, type: 2}
+  - {fileID: 11400000, guid: a95c2afe683074942a81d2f7910c7998, type: 2}
+  - {fileID: 11400000, guid: c069595969b34fc41aed52ae4d0adbf9, type: 2}
+  - {fileID: 11400000, guid: 341b2f8d21cd0234e823169e597c2e02, type: 2}
   - {fileID: 11400000, guid: 6f285171731dc714c88265f82e5f79a8, type: 2}
+  - {fileID: 11400000, guid: e8e2b6502c2e7f145b4a6264915ea5c6, type: 2}
+  - {fileID: 11400000, guid: e7c195464ed25234aa6f94ac1dd99de8, type: 2}
+  - {fileID: 11400000, guid: 71ac35275c13350429a92d69262a2e42, type: 2}
+  - {fileID: 11400000, guid: abf4a89229f09914ba6340101bb199f4, type: 2}
   pool: {fileID: 1456877299}
 --- !u!224 &1897650229 stripped
 RectTransform:

@@ -17,6 +17,7 @@ MonoBehaviour:
   skillCategory: 0
   cooltime: 0
   duration: 0
+  skillGroup: SKILL_GROUP
   type: 0
   isTickDamage: 0
   tickInterval: 0
@@ -31,3 +32,4 @@ MonoBehaviour:
   unlockCondition: UNLOCK_CONDITION
   iconPath: ICON_IMAGE
   description: 
+  skillPrefab: {fileID: 0}

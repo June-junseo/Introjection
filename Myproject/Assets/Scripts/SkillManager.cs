@@ -3,26 +3,22 @@ using UnityEngine;
 
 public class SkillManager : MonoBehaviour
 {
-    public List<SkillData> skillDatas;
+    public List<SkillData> skillDatas;  
     public PoolManager pool;
 
     private List<ISkill> skills = new List<ISkill>();
 
     private void Start()
     {
-        SkillData starter = skillDatas.Find(s => s.level == 1 && s.skillName.Contains("롱소드"));
+        SkillData starter = skillDatas.Find(s => s.level == 1 && s.skillGroup == "SWORD");
         if (starter != null)
-        {
             AddSkill(starter);
-        }
     }
 
     private void Update()
     {
         foreach (var s in skills)
-        {
             s.UpdateSkill();
-        }
     }
 
     public void AddSkill(SkillData newSkillData)
@@ -32,40 +28,33 @@ public class SkillManager : MonoBehaviour
             return;
         }
 
-        ISkill existing = skills.Find(s => s != null && s.Data != null && s.Data.skillName == newSkillData.skillName);
+        ISkill existingSkill = skills.Find(s => s != null && s.Data != null && s.Data.skillGroup == newSkillData.skillGroup);
 
-        if (existing != null)
+        if (existingSkill != null)
         {
-            SkillData nextLevel = GetNextLevelSkill(existing.Data);
-            if (nextLevel != null && nextLevel.id == newSkillData.id)
-            {
-                existing.Init(nextLevel, pool, transform);
-                Debug.Log($"스킬 레벨업: {nextLevel.skillName} Lv.{nextLevel.level}");
-            }
+
+            existingSkill.Init(newSkillData, pool, transform);
+            Debug.Log($"스킬 레벨업: {newSkillData.skillName} Lv.{newSkillData.level}");
             return;
         }
 
-        if (newSkillData.level != 1)
-        {
-            return;
-        }
+
+        if (newSkillData.level != 1) return;
 
         ISkill skill = SkillFactory.CreateSkill(newSkillData);
         skill.Init(newSkillData, pool, transform);
         skills.Add(skill);
-
         Debug.Log($"새 스킬 획득: {newSkillData.skillName} Lv.{newSkillData.level}");
     }
 
-    public bool HasSkill(string skillName)
+    public bool HasSkill(string skillGroup)
     {
-        return skills.Exists(s => s != null && s.Data != null && s.Data.skillName == skillName);
+        return skills.Exists(s => s.Data.skillGroup == skillGroup);
     }
 
-    public SkillData GetCurrentSkill(string skillName)
+    public SkillData GetCurrentSkill(string skillGroup)
     {
-        var skill = skills.Find(s => s != null && s.Data != null && s.Data.skillName == skillName);
-        return skill?.Data;
+        return skills.Find(s => s.Data.skillGroup == skillGroup)?.Data;
     }
 
     public SkillData GetNextLevelSkill(SkillData current)
@@ -74,7 +63,8 @@ public class SkillManager : MonoBehaviour
         {
             return null;
         }
-        return skillDatas.Find(s => s.skillName == current.skillName && s.level == current.level + 1);
+
+        return skillDatas.Find(s => s.skillGroup == current.skillGroup && s.level == current.level + 1);
     }
 
     public List<ISkill> GetAllSkills()

@@ -5,19 +5,33 @@ public class LongSwordSkill : ISkill
     private SkillData data;
     private PoolManager pool;
     private Transform parent;
+    private Transform skillRoot;
     private Player player;
     private float baseAttack = 60f;
     private float cooldownTimer = 0f;
 
+    public SkillData Data { get; set; }
+
     public void Init(SkillData data, PoolManager pool, Transform parent)
     {
-        this.data = data;
+        this.Data = data;
         this.pool = pool;
         this.parent = parent;
         cooldownTimer = 0f;
-    }
 
-    public SkillData Data { get; set; }
+        if (skillRoot == null)
+        {
+            GameObject rootObj = new GameObject($"{data.skillGroup}_Root");
+            rootObj.transform.SetParent(parent);
+            rootObj.transform.localPosition = Vector3.zero;
+            skillRoot = rootObj.transform;
+        }
+
+        for (int i = skillRoot.childCount - 1; i >= 0; i--)
+        {
+            pool.Release(skillRoot.GetChild(i).gameObject);
+        }
+    }
 
     public void UpdateSkill()
     {
@@ -27,30 +41,24 @@ public class LongSwordSkill : ISkill
         }
 
         cooldownTimer -= Time.deltaTime;
-        if (cooldownTimer > 0f)
-        {
-            return;
-        }
+        if (cooldownTimer > 0f) return;
 
         Vector2 direction = player.vec;
-        if (direction == Vector2.zero)
-        {
-            direction = Vector2.right;
-        }
+        if (direction == Vector2.zero) direction = Vector2.right;
 
-        GameObject swordObj = pool.Get(data.id);
+        GameObject swordObj = pool.Get(Data.id);
         if (swordObj != null)
         {
             swordObj.transform.position = player.transform.position;
-            swordObj.transform.parent = parent;
+            swordObj.transform.SetParent(skillRoot);
 
             LongSword sword = swordObj.GetComponent<LongSword>();
             if (sword != null)
             {
-                sword.Init(baseAttack * data.damagePercent, -1, direction);
+                sword.Init(baseAttack * Data.damagePercent, -1, direction);
             }
         }
 
-        cooldownTimer = data.cooltime;
+        cooldownTimer = Data.cooltime;
     }
 }

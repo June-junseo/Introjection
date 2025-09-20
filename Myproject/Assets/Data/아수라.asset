@@ -17,6 +17,7 @@ MonoBehaviour:
   skillCategory: 2
   cooltime: 0.2
   duration: 0
+  skillGroup: SWORD
   type: 1
   isTickDamage: 0
   tickInterval: 0
@@ -31,3 +32,4 @@ MonoBehaviour:
   unlockCondition: 
   iconPath: 
   description: 
+  skillPrefab: {fileID: 0}

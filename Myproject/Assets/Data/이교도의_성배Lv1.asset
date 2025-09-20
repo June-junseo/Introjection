@@ -17,6 +17,7 @@ MonoBehaviour:
   skillCategory: 1
   cooltime: 0
   duration: 4
+  skillGroup: HOLYGRAIL
   type: 4
   isTickDamage: 1
   tickInterval: 1
@@ -31,3 +32,4 @@ MonoBehaviour:
   unlockCondition: "4\uC2A4\uD14C\uC774\uC9C0 \uD074\uB9AC\uC5B4"
   iconPath: 
   description: 
+  skillPrefab: {fileID: 0}
