@@ -1,6 +1,7 @@
 using UnityEngine;
+using System;
 
-[System.Serializable]
+[Serializable]
 [CreateAssetMenu(fileName = "SkillDatasFile", menuName = "Game/Skill Data")]
 public class SkillData : ScriptableObject, ICSVImportable
 {
@@ -52,9 +53,18 @@ public class SkillData : ScriptableObject, ICSVImportable
   
     private int ToInt(string s, int defaultValue = 0)
     {
-        if (string.IsNullOrWhiteSpace(s)) return defaultValue;
-        if (int.TryParse(s, out int v)) return v;
-        if (float.TryParse(s, out float f)) return Mathf.RoundToInt(f);
+        if (string.IsNullOrWhiteSpace(s))
+        {
+            return defaultValue;
+        }
+        if (int.TryParse(s, out int v))
+        {
+            return v;
+        }
+        if (float.TryParse(s, out float f))
+        {
+            return Mathf.RoundToInt(f);
+        }
         return defaultValue;
     }
 

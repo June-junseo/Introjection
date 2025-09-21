@@ -21468,7 +21468,7 @@ MonoBehaviour:
   slider: {fileID: 1464558700}
   levelUpText: {fileID: 2024903335}
   player: {fileID: 1321480630}
-  gameManager: {fileID: 0}
+  gameManager: {fileID: 803647296}
 --- !u!4 &1315086487
 Transform:
   m_ObjectHideFlags: 0
@@ -21493,6 +21493,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1321480627}
+  - component: {fileID: 1321480634}
   - component: {fileID: 1321480630}
   - component: {fileID: 1321480631}
   - component: {fileID: 1321480633}
@@ -21615,6 +21616,22 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.85, y: 0.74}
   m_EdgeRadius: 0
+--- !u!114 &1321480634
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1321480624}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bfdd27d1c2067074288ecb5c5628da53, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseAttack: 10
+  attackMultiplier: 1
+  cooldownReduction: 0
+  moveSpeed: 5
 --- !u!1 &1378470059
 GameObject:
   m_ObjectHideFlags: 0
@@ -28937,7 +28954,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e7c195464ed25234aa6f94ac1dd99de8, type: 2}
   - {fileID: 11400000, guid: 71ac35275c13350429a92d69262a2e42, type: 2}
   - {fileID: 11400000, guid: abf4a89229f09914ba6340101bb199f4, type: 2}
+  passiveCSV: {fileID: 4900000, guid: 3e8f70a45187fb645bf6b23c8ed1aee0, type: 3}
   pool: {fileID: 1456877299}
+  stats: {fileID: 1321480634}
 --- !u!224 &1897650229 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2734361560636771764, guid: 6a1158b8c77e74152951cddb6f1d77de, type: 3}

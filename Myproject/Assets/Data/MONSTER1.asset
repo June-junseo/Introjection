@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 0
   prefab: {fileID: 593541880334608524, guid: f321a0a6eba4bd8448a3a6456197f13b, type: 3}
-  maxHp: 100
+  maxHp: 10
   speed: 1
   damage: 10
   poolSize: 20

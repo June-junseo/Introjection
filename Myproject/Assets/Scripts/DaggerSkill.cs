@@ -4,17 +4,20 @@ public class DaggerSkill : ISkill
 {
     private PoolManager pool;
     private Transform parent;
-    private Transform skillRoot; 
+    private Transform skillRoot;
+    private CharacterStats stats;
+
     private float speed = 300f;
-    private float baseAttack = 30f;
 
     public SkillData Data { get; set; }
 
-    public void Init(SkillData data, PoolManager pool, Transform parent)
+
+    public void Init(SkillData data, PoolManager pool, Transform parent, CharacterStats stats)
     {
         this.Data = data;
         this.pool = pool;
         this.parent = parent;
+        this.stats = stats;
 
         if (skillRoot == null)
         {
@@ -27,14 +30,16 @@ public class DaggerSkill : ISkill
         ArrangeDaggers();
     }
 
+
     public void UpdateSkill()
     {
         if (skillRoot != null)
         {
+
             skillRoot.Rotate(Vector3.back * speed * Time.deltaTime);
         }
-
     }
+
 
     private void ArrangeDaggers()
     {
@@ -43,6 +48,7 @@ public class DaggerSkill : ISkill
             return;
         }
 
+
         while (skillRoot.childCount < Data.projectileCount)
         {
             GameObject daggerObj = pool.Get(Data.id);
@@ -50,15 +56,15 @@ public class DaggerSkill : ISkill
             {
                 break;
             }
-            else
+
+            Dagger dagger = daggerObj.GetComponent<Dagger>();
+
+            if (dagger != null)
             {
-                Dagger dagger = daggerObj.GetComponent<Dagger>();
-                if (dagger != null)
-                {
-                    dagger.Init(baseAttack * Data.damagePercent, -1, Vector2.zero);
-                }
+                float finalDamage = stats.GetFinalAttack() * Data.damagePercent;
+                dagger.Init(finalDamage, -1, Vector2.zero);
             }
-                daggerObj.transform.SetParent(skillRoot);
+            daggerObj.transform.SetParent(skillRoot);
         }
 
         while (skillRoot.childCount > Data.projectileCount)
@@ -66,10 +72,9 @@ public class DaggerSkill : ISkill
             pool.Release(skillRoot.GetChild(skillRoot.childCount - 1).gameObject);
         }
 
-
         float angleStep = 360f / Data.projectileCount;
         float radius = 2f;
-        float startAngle = Data.projectileCount % 2 == 0 ? angleStep / 2 : 0;
+        float startAngle = Data.projectileCount % 2 == 0 ? angleStep / 2f : 0f;
 
         for (int i = 0; i < Data.projectileCount; i++)
         {
@@ -77,7 +82,6 @@ public class DaggerSkill : ISkill
             float angle = startAngle + i * angleStep;
             float rad = angle * Mathf.Deg2Rad;
             Vector2 pos = new Vector2(Mathf.Cos(rad), Mathf.Sin(rad)) * radius;
-
             dagger.localPosition = pos;
             dagger.localRotation = Quaternion.Euler(0, 0, angle);
         }

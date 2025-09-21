@@ -12,7 +12,10 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if (gameEnded) return;
+        if (gameEnded)
+        {
+            return;
+        }
 
         currentTime += Time.deltaTime;
         UpdateTimerUI();
@@ -25,7 +28,10 @@ public class GameManager : MonoBehaviour
 
     private void UpdateTimerUI()
     {
-        if (timerText == null) return;
+        if (timerText == null)
+        {
+            return;
+        }
 
         float remaining = Mathf.Max(0, maxTime - currentTime);
         int minutes = Mathf.FloorToInt(remaining / 60f);

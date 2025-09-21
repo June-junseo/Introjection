@@ -7,16 +7,18 @@ public class LongSwordSkill : ISkill
     private Transform parent;
     private Transform skillRoot;
     private Player player;
-    private float baseAttack = 60f;
+    private CharacterStats stats;
+
     private float cooldownTimer = 0f;
 
     public SkillData Data { get; set; }
 
-    public void Init(SkillData data, PoolManager pool, Transform parent)
+    public void Init(SkillData data, PoolManager pool, Transform parent, CharacterStats stats)
     {
         this.Data = data;
         this.pool = pool;
         this.parent = parent;
+        this.stats = stats;
         cooldownTimer = 0f;
 
         if (skillRoot == null)
@@ -41,12 +43,20 @@ public class LongSwordSkill : ISkill
         }
 
         cooldownTimer -= Time.deltaTime;
-        if (cooldownTimer > 0f) return;
+
+        if (cooldownTimer > 0f)
+        {
+            return;
+        }
 
         Vector2 direction = player.vec;
-        if (direction == Vector2.zero) direction = Vector2.right;
+        if (direction == Vector2.zero)
+        {
+            direction = Vector2.right;
+        }
 
         GameObject swordObj = pool.Get(Data.id);
+
         if (swordObj != null)
         {
             swordObj.transform.position = player.transform.position;
@@ -55,10 +65,12 @@ public class LongSwordSkill : ISkill
             LongSword sword = swordObj.GetComponent<LongSword>();
             if (sword != null)
             {
-                sword.Init(baseAttack * Data.damagePercent, -1, direction);
+
+                float finalDamage = stats.GetFinalAttack() * Data.damagePercent;
+                sword.Init(finalDamage, -1, direction);
             }
         }
 
-        cooldownTimer = Data.cooltime;
+        cooldownTimer = stats.GetFinalCooldown(Data.cooltime);
     }
 }

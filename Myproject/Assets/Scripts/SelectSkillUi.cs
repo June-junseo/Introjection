@@ -9,7 +9,9 @@ public class SelectSkillUi : MonoBehaviour
     public Button button1, button2, button3;
     public SkillManager skillManager;
 
-    private List<SkillData> availableSkills = new List<SkillData>();
+    private List<SkillData> availableActive = new List<SkillData>();
+    private List<PassiveSkillData> availablePassive = new List<PassiveSkillData>();
+    private List<(bool isActive, int idx)> selectedForUi = new List<(bool, int)>();
 
     private void Start()
     {
@@ -34,44 +36,53 @@ public class SelectSkillUi : MonoBehaviour
 
     private void PickSkillsForLevelUp()
     {
-        availableSkills.Clear();
-        List<SkillData> pool = new List<SkillData>();
+        availableActive.Clear();
+        availablePassive.Clear();
+        selectedForUi.Clear();
 
         foreach (var data in skillManager.skillDatas)
         {
-            SkillData current = skillManager.GetCurrentSkill(data.skillGroup);
-
+            var current = skillManager.GetCurrentSkill(data.skillGroup);
             if (current != null)
             {
-                SkillData next = skillManager.GetNextLevelSkill(current);
-                if (next != null)
-                {
-                    pool.Add(next);
-                }
+                var next = skillManager.GetNextLevelSkill(current);
+                if (next != null) availableActive.Add(next);
             }
             else if (data.level == 1)
             {
-                pool.Add(data);
+                availableActive.Add(data);
             }
         }
 
-        Dictionary<string, SkillData> uniquePool = new Dictionary<string, SkillData>();
-        foreach (var s in pool)
+        foreach (var p in skillManager.PassiveSkills)
         {
-            if (!uniquePool.ContainsKey(s.skillGroup))
+            var current = skillManager.GetCurrentPassive(p.passiveGroup);
+            if (current != null)
             {
-                uniquePool.Add(s.skillGroup, s);
+                var next = skillManager.GetNextLevelPassive(current);
+                if (next != null) availablePassive.Add(next);
             }
         }
 
-        pool = new List<SkillData>(uniquePool.Values);
-
-        int count = Mathf.Min(3, pool.Count);
-        for (int i = 0; i < count; i++)
+        foreach (var p in CSVLoader.LoadCSV<PassiveSkillData>(skillManager.passiveCSV))
         {
-            int idx = Random.Range(0, pool.Count);
-            availableSkills.Add(pool[idx]);
-            pool.RemoveAt(idx);
+            if (skillManager.GetCurrentPassive(p.passiveGroup) == null && p.level == 1)
+                availablePassive.Add(p);
+        }
+
+        for (int i = 0; i < 3; i++)
+        {
+            bool chooseActive = (Random.value < 0.5f && availableActive.Count > 0) || availablePassive.Count == 0;
+            if (chooseActive && availableActive.Count > 0)
+            {
+                int idx = Random.Range(0, availableActive.Count);
+                selectedForUi.Add((true, idx));
+            }
+            else if (availablePassive.Count > 0)
+            {
+                int idx = Random.Range(0, availablePassive.Count);
+                selectedForUi.Add((false, idx));
+            }
         }
 
         UpdateButton(button1, 0);
@@ -79,29 +90,47 @@ public class SelectSkillUi : MonoBehaviour
         UpdateButton(button3, 2);
     }
 
-
-    private void UpdateButton(Button btn, int idx)
+    private void UpdateButton(Button btn, int buttonIndex)
     {
-        if (idx < availableSkills.Count)
+        if (buttonIndex >= selectedForUi.Count)
         {
-            btn.gameObject.SetActive(true);
-            var skill = availableSkills[idx];
+            btn.gameObject.SetActive(false);
+            return;
+        }
+
+        btn.gameObject.SetActive(true);
+        var sel = selectedForUi[buttonIndex];
+
+        if (sel.isActive)
+        {
+            var skill = availableActive[sel.idx];
             btn.GetComponentInChildren<TMP_Text>().text = $"{skill.skillName} Lv.{skill.level}";
         }
         else
         {
-            btn.gameObject.SetActive(false);
+            var passive = availablePassive[sel.idx];
+            btn.GetComponentInChildren<TMP_Text>().text = $"{passive.skillName} Lv.{passive.level}";
         }
     }
 
-    private void OnSkillClicked(int index)
+    private void OnSkillClicked(int buttonIndex)
     {
-        if (index >= availableSkills.Count)
+        if (buttonIndex >= selectedForUi.Count)
         {
             return;
         }
 
-        skillManager.AddSkill(availableSkills[index]);
+        var sel = selectedForUi[buttonIndex];
+
+        if (sel.isActive)
+        {
+            skillManager.AddSkill(availableActive[sel.idx]);
+        }
+        else
+        {
+            skillManager.AddPassiveSkill(availablePassive[sel.idx]);
+        }
+
         CloseUi();
     }
 }
