@@ -9,9 +9,7 @@ public class SelectSkillUi : MonoBehaviour
     public Button button1, button2, button3;
     public SkillManager skillManager;
 
-    private List<SkillData> availableActive = new List<SkillData>();
-    private List<PassiveSkillData> availablePassive = new List<PassiveSkillData>();
-    private List<(bool isActive, int idx)> selectedForUi = new List<(bool, int)>();
+    private List<(bool isActive, SkillData active, PassiveSkillData passive)> selectedForUi = new List<(bool, SkillData, PassiveSkillData)>();
 
     private void Start()
     {
@@ -36,52 +34,76 @@ public class SelectSkillUi : MonoBehaviour
 
     private void PickSkillsForLevelUp()
     {
-        availableActive.Clear();
-        availablePassive.Clear();
         selectedForUi.Clear();
+
+        List<SkillData> activeCandidates = new List<SkillData>();
+        List<PassiveSkillData> passiveCandidates = new List<PassiveSkillData>();
+        HashSet<string> usedSkillGroups = new HashSet<string>();
+        HashSet<string> usedPassiveGroups = new HashSet<string>();
 
         foreach (var data in skillManager.skillDatas)
         {
             var current = skillManager.GetCurrentSkill(data.skillGroup);
+
+            SkillData candidate = null;
+
             if (current != null)
             {
-                var next = skillManager.GetNextLevelSkill(current);
-                if (next != null) availableActive.Add(next);
+                candidate = skillManager.GetNextLevelSkill(current);
             }
             else if (data.level == 1)
             {
-                availableActive.Add(data);
+                candidate = data;
+            }
+
+            if (candidate != null && !usedSkillGroups.Contains(candidate.skillGroup))
+            {
+                activeCandidates.Add(candidate);
+                usedSkillGroups.Add(candidate.skillGroup);
             }
         }
 
         foreach (var p in skillManager.PassiveSkills)
         {
-            var current = skillManager.GetCurrentPassive(p.passiveGroup);
-            if (current != null)
+            var next = skillManager.GetNextLevelPassive(p);
+            if (next != null && !usedPassiveGroups.Contains(next.passiveGroup))
             {
-                var next = skillManager.GetNextLevelPassive(current);
-                if (next != null) availablePassive.Add(next);
+                passiveCandidates.Add(next);
+                usedPassiveGroups.Add(next.passiveGroup);
             }
         }
 
         foreach (var p in CSVLoader.LoadCSV<PassiveSkillData>(skillManager.passiveCSV))
         {
-            if (skillManager.GetCurrentPassive(p.passiveGroup) == null && p.level == 1)
-                availablePassive.Add(p);
+            if (skillManager.GetCurrentPassive(p.passiveGroup) == null
+                && p.level == 1
+                && !usedPassiveGroups.Contains(p.passiveGroup))
+            {
+                passiveCandidates.Add(p);
+                usedPassiveGroups.Add(p.passiveGroup);
+            }
         }
 
         for (int i = 0; i < 3; i++)
         {
-            bool chooseActive = (Random.value < 0.5f && availableActive.Count > 0) || availablePassive.Count == 0;
-            if (chooseActive && availableActive.Count > 0)
+            if (activeCandidates.Count == 0 && passiveCandidates.Count == 0)
             {
-                int idx = Random.Range(0, availableActive.Count);
-                selectedForUi.Add((true, idx));
+                break;
             }
-            else if (availablePassive.Count > 0)
+
+            bool chooseActive = (Random.value < 0.5f && activeCandidates.Count > 0) || passiveCandidates.Count == 0;
+
+            if (chooseActive && activeCandidates.Count > 0)
             {
-                int idx = Random.Range(0, availablePassive.Count);
-                selectedForUi.Add((false, idx));
+                int idx = Random.Range(0, activeCandidates.Count);
+                selectedForUi.Add((true, activeCandidates[idx], null));
+                activeCandidates.RemoveAt(idx);
+            }
+            else if (passiveCandidates.Count > 0)
+            {
+                int idx = Random.Range(0, passiveCandidates.Count);
+                selectedForUi.Add((false, null, passiveCandidates[idx]));
+                passiveCandidates.RemoveAt(idx);
             }
         }
 
@@ -90,45 +112,43 @@ public class SelectSkillUi : MonoBehaviour
         UpdateButton(button3, 2);
     }
 
-    private void UpdateButton(Button btn, int buttonIndex)
+    private void UpdateButton(Button btn, int index)
     {
-        if (buttonIndex >= selectedForUi.Count)
+        if (index >= selectedForUi.Count)
         {
             btn.gameObject.SetActive(false);
             return;
         }
 
         btn.gameObject.SetActive(true);
-        var sel = selectedForUi[buttonIndex];
+        var sel = selectedForUi[index];
 
         if (sel.isActive)
         {
-            var skill = availableActive[sel.idx];
-            btn.GetComponentInChildren<TMP_Text>().text = $"{skill.skillName} Lv.{skill.level}";
+            btn.GetComponentInChildren<TMP_Text>().text = $"{sel.active.skillName} Lv.{sel.active.level}";
         }
         else
         {
-            var passive = availablePassive[sel.idx];
-            btn.GetComponentInChildren<TMP_Text>().text = $"{passive.skillName} Lv.{passive.level}";
+            btn.GetComponentInChildren<TMP_Text>().text = $"{sel.passive.skillName} Lv.{sel.passive.level}";
         }
     }
 
-    private void OnSkillClicked(int buttonIndex)
+    private void OnSkillClicked(int index)
     {
-        if (buttonIndex >= selectedForUi.Count)
+        if (index >= selectedForUi.Count)
         {
             return;
         }
 
-        var sel = selectedForUi[buttonIndex];
+        var sel = selectedForUi[index];
 
         if (sel.isActive)
         {
-            skillManager.AddSkill(availableActive[sel.idx]);
+            skillManager.AddSkill(sel.active);
         }
         else
         {
-            skillManager.AddPassiveSkill(availablePassive[sel.idx]);
+            skillManager.AddPassiveSkill(sel.passive);
         }
 
         CloseUi();
