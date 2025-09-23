@@ -14,8 +14,12 @@ public class CharacterStats : MonoBehaviour
         return baseAttack * attackMultiplier;
     }
 
-    public float GetFinalCooldown(float baseCooldown)
+    public float GetFinalCooldown(float skillBaseCooldown)
     {
-        return baseCooldown * (1f - cooldownReduction);
+        float totalCooldownReduction = cooldownReduction;
+        totalCooldownReduction = Mathf.Clamp01(totalCooldownReduction);
+
+        return skillBaseCooldown * (1f - totalCooldownReduction);
     }
+
 }

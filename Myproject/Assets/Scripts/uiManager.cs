@@ -34,5 +34,10 @@ public class uiManager : MonoBehaviour
         }
     }
 
+    public void OnClickAddExpCheat()
+    {
+        player.CheatAddExp(100);
+    }
+
 
 }

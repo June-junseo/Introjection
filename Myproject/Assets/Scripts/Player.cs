@@ -41,16 +41,6 @@ public class Player : MonoBehaviour
         currentExp = 0;
         expToLevel = CalculateExpToNextLevel(level);
 
-
-        if (levelUpButton != null)
-        {
-            levelUpButton.onClick.AddListener(LevelUpCheat);
-        }
-    }
-
-    private void LevelUpCheat()
-    {
-        LevelUp();
     }
 
 
@@ -79,6 +69,12 @@ public class Player : MonoBehaviour
         {
             skillUi.OpenUi();
         }
+    }
+
+    public void CheatAddExp(int amount)
+    {
+        AddExp(amount);
+        Debug.Log($"Cheat! Exp +{amount}");
     }
 
     private int CalculateExpToNextLevel(int lvl)

@@ -78,7 +78,9 @@ public class CSVImporter : EditorWindow
     private string MakeSafeAssetName(string name)
     {
         if (string.IsNullOrEmpty(name))
+        {
             return "Unnamed";
+        }
 
         foreach (char c in System.IO.Path.GetInvalidFileNameChars())
             name = name.Replace(c, '_');

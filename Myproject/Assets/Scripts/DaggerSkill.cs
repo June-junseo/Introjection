@@ -39,8 +39,6 @@ public class DaggerSkill : ISkill
             skillRoot.Rotate(Vector3.back * speed * Time.deltaTime);
         }
     }
-
-
     private void ArrangeDaggers()
     {
         if (Data.projectileCount <= 0)

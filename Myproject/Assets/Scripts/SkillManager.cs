@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class SkillManager : MonoBehaviour
@@ -16,19 +17,21 @@ public class SkillManager : MonoBehaviour
 
     private void Awake()
     {
-
-        passiveSkills = new List<PassiveSkillData>();
         applier = new PassiveSkillApplier(stats);
     }
 
     private void Start()
     {
-        SkillData starter = skillDatas.Find(s => s.level == 1 && s.skillGroup == "SWORD");
-        if (starter != null)
+        foreach (var data in skillDatas)
         {
-            AddSkill(starter);
+            if (data.level == 1 && data.skillGroup == "SWORD") 
+            {
+                AddSkill(data);
+                break;
+            }
         }
     }
+
 
     private void Update()
     {
@@ -40,16 +43,13 @@ public class SkillManager : MonoBehaviour
 
     public void AddSkill(SkillData newSkillData)
     {
-        if (newSkillData == null)
-        {
-            return;
-        }
+        if (newSkillData == null) return;
 
-        ISkill existingSkill = skills.Find(s => s.Data != null && s.Data.skillGroup == newSkillData.skillGroup);
+        ISkill existing = skills.Find(s => s.Data != null && s.Data.skillGroup == newSkillData.skillGroup);
 
-        if (existingSkill != null)
+        if (existing != null)
         {
-            existingSkill.Init(newSkillData, pool, transform, stats);
+            existing.Init(newSkillData, pool, transform, stats);
             Debug.Log($"스킬 레벨업: {newSkillData.skillName} Lv.{newSkillData.level}");
             return;
         }
@@ -76,10 +76,24 @@ public class SkillManager : MonoBehaviour
 
         if (existing != null)
         {
-            passiveSkills.Remove(existing);
-            passiveSkills.Add(newPassive);
-            applier.Apply(newPassive);
-            Debug.Log($"패시브 레벨업: {newPassive.skillName} Lv.{newPassive.level}");
+            int levelDiff = newPassive.level - existing.level;
+
+            if (levelDiff > 0)
+            {
+                PassiveSkillData upgraded = new PassiveSkillData
+                {
+                    passiveGroup = existing.passiveGroup,
+                    skillName = existing.skillName,
+                    level = newPassive.level,
+                    passiveValue = newPassive.passiveValue,
+                    affectAbility = newPassive.affectAbility
+                };
+
+                applier.Apply(upgraded);
+                passiveSkills.Remove(existing);
+                passiveSkills.Add(upgraded);
+                Debug.Log($"패시브 레벨업: {upgraded.skillName} Lv.{upgraded.level}");
+            }
             return;
         }
 
@@ -93,7 +107,8 @@ public class SkillManager : MonoBehaviour
         Debug.Log($"새 패시브 획득: {newPassive.skillName} Lv.{newPassive.level}");
     }
 
-    public SkillData GetCurrentSkill(string skillGroup) => skills.Find(s => s.Data.skillGroup == skillGroup)?.Data;
+    public SkillData GetCurrentSkill(string skillGroup) =>
+        skills.Find(s => s.Data.skillGroup == skillGroup)?.Data;
 
     public SkillData GetNextLevelSkill(SkillData current) =>
         skillDatas.Find(s => s.skillGroup == current.skillGroup && s.level == current.level + 1);
@@ -101,6 +116,25 @@ public class SkillManager : MonoBehaviour
     public PassiveSkillData GetCurrentPassive(string passiveGroup) =>
         passiveSkills.Find(p => p.passiveGroup == passiveGroup);
 
-    public PassiveSkillData GetNextLevelPassive(PassiveSkillData current) =>
-        passiveSkills.Find(s => s.passiveGroup == current.passiveGroup && s.level == current.level + 1);
+    public PassiveSkillData GetNextLevelPassive(PassiveSkillData current)
+    {
+        return CSVLoader.LoadCSV<PassiveSkillData>(passiveCSV)
+            .Find(p => p.passiveGroup == current.passiveGroup && p.level == current.level + 1);
+    }
+
+    public List<ISkill> GetOwnedActiveSkills()
+    {
+        return skills; 
+    }
+
+    public bool CanAddActiveSkill()
+    {
+        return skills.Count < 3;
+    }
+
+    public bool CanAddPassiveSkill()
+    {
+        return passiveSkills.Count < 5;
+    }
+
 }

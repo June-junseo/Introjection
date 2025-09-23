@@ -11,7 +11,7 @@ public class PassiveSkillData : ICSVImportable
     public int affectAbility;
     public float passiveValue;
     public string description;
-    public string iconImg;
+    public string iconPath;
     public string unlockCondition;
     public int level;
     public string flavorText;
@@ -25,7 +25,7 @@ public class PassiveSkillData : ICSVImportable
         affectAbility = int.TryParse(row[4].Trim(), out int tmpAff) ? tmpAff : 0;
         passiveValue = float.TryParse(row[5].Trim(), out float tmpVal) ? tmpVal : 0f;
         description = row[6].Trim();
-        iconImg = row[7].Trim();
+        iconPath = row[7].Trim();
         unlockCondition = row[8].Trim();
         level = int.TryParse(row[9].Trim(), out int tmpLevel) ? tmpLevel : 1;
         flavorText = row[10].Trim();

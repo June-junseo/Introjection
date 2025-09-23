@@ -8,15 +8,29 @@ public class SelectSkillUi : MonoBehaviour
     public GameObject uiPanel;
     public Button button1, button2, button3;
     public SkillManager skillManager;
+    public OwnedSkillUi ownedSkillUi;
 
-    private List<(bool isActive, SkillData active, PassiveSkillData passive)> selectedForUi = new List<(bool, SkillData, PassiveSkillData)>();
+    [System.Serializable]
+    public class SkillButtonUi
+    {
+        public Button button;
+        public Image icon;
+        public TMP_Text text;
+    }
+    private List<(bool isActive, SkillData active, PassiveSkillData passive)> selectedForUi
+        = new List<(bool, SkillData, PassiveSkillData)>();
+
+    public SkillButtonUi[] skillButtons;
 
     private void Start()
     {
         CloseUi();
-        button1.onClick.AddListener(() => OnSkillClicked(0));
-        button2.onClick.AddListener(() => OnSkillClicked(1));
-        button3.onClick.AddListener(() => OnSkillClicked(2));
+        
+        for(int i = 0; i < skillButtons.Length; i++)
+        {
+            int idx = i;
+            skillButtons[i].button.onClick.AddListener(() => OnSkillClicked(idx));
+        }
     }
 
     public void OpenUi()
@@ -44,17 +58,7 @@ public class SelectSkillUi : MonoBehaviour
         foreach (var data in skillManager.skillDatas)
         {
             var current = skillManager.GetCurrentSkill(data.skillGroup);
-
-            SkillData candidate = null;
-
-            if (current != null)
-            {
-                candidate = skillManager.GetNextLevelSkill(current);
-            }
-            else if (data.level == 1)
-            {
-                candidate = data;
-            }
+            SkillData candidate = current != null ? skillManager.GetNextLevelSkill(current) : (data.level == 1 ? data : null);
 
             if (candidate != null && !usedSkillGroups.Contains(candidate.skillGroup))
             {
@@ -107,31 +111,60 @@ public class SelectSkillUi : MonoBehaviour
             }
         }
 
-        UpdateButton(button1, 0);
-        UpdateButton(button2, 1);
-        UpdateButton(button3, 2);
+        for (int i = 0; i < skillButtons.Length; i++)
+        {
+            UpdateButton(skillButtons[i], i);
+        }
+
+        Debug.Log($"Selected for UI: {selectedForUi.Count} items");
     }
 
-    private void UpdateButton(Button btn, int index)
+    private void UpdateButton(SkillButtonUi btnUi, int index)
     {
         if (index >= selectedForUi.Count)
         {
-            btn.gameObject.SetActive(false);
+            btnUi.button.gameObject.SetActive(false);
             return;
         }
 
-        btn.gameObject.SetActive(true);
+        btnUi.button.gameObject.SetActive(true);
         var sel = selectedForUi[index];
+
+        string iconPath = "Icons/DefaultIcon";
+        string text = "";
 
         if (sel.isActive)
         {
-            btn.GetComponentInChildren<TMP_Text>().text = $"{sel.active.skillName} Lv.{sel.active.level}";
+            text = $"{sel.active.skillName}";
+            if (!string.IsNullOrEmpty(sel.active.iconPath))
+            {
+                iconPath = sel.active.iconPath;
+            }
         }
         else
         {
-            btn.GetComponentInChildren<TMP_Text>().text = $"{sel.passive.skillName} Lv.{sel.passive.level}";
+            text = $"{sel.passive.skillName}";
+            if (!string.IsNullOrEmpty(sel.passive.iconPath))
+            {
+                iconPath = sel.passive.iconPath;
+            }
+        }
+
+        btnUi.text.text = text;
+
+        Sprite icon = Resources.Load<Sprite>(iconPath);
+
+        if (icon != null)
+        {
+            btnUi.icon.sprite = icon;
+        }
+        else
+        {
+            Debug.LogWarning($"Icon not found for {text} at path: {iconPath}. Using default icon.");
+            btnUi.icon.sprite = Resources.Load<Sprite>("Icons/DefaultIcon");
         }
     }
+
 
     private void OnSkillClicked(int index)
     {
@@ -151,6 +184,7 @@ public class SelectSkillUi : MonoBehaviour
             skillManager.AddPassiveSkill(sel.passive);
         }
 
+        ownedSkillUi.RefreshOwnedSkills();
         CloseUi();
     }
 }

@@ -12,6 +12,8 @@ public static class SkillFactory
                 return new DaggerSkill();
             case "STAFF": // ฝบลยวม
                 return new StaffSkill();
+            case "BOW": 
+                return new ArrowSkill();
             default:
                 Debug.LogWarning($"Unknown skill type: {data.skillGroup}");
                 return null;
