@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2edc3d061d19cff46a34282892404f14, type: 3}
   m_Name: MonsterDatabase
   m_EditorClassIdentifier: 
-  monsters:
-  - {fileID: 11400000, guid: 1ba221daf44694742b8cabc9131a85b1, type: 2}
-  - {fileID: 11400000, guid: e09aae2e9f3b78b49b6f5996bea52595, type: 2}
+  normalMonsters:
+  - {fileID: 11400000, guid: 53820ba17d706134897520661fa0af00, type: 2}
+  - {fileID: 11400000, guid: 24ceb2614cd290d41b749c9894032922, type: 2}
+  eliteMonsters: []

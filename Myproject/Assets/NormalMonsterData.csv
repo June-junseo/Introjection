@@ -1,0 +1,7 @@
+ID,MONSTER_NAME,Base_Hp,Base_Atk,SPEED,ATK.SPEED,DROP1,DROP1.Rate,DROP2,DROP2.Rate,PrefabPath
+100510,SLIME1,10,5,1.0,0.7,Exp.Small,0.6,Exp.Large,0.1,Monsters/monster1
+80820,SLIME2,8,8,2.0,0.7,Exp.Small,0.5,Exp.Large,0.1,Monsters/monster2
+121015,SKELETON1,12,10,1.5,0.7,Exp.Small,0.9,Exp.Large,0.1,Monsters/monster3
+201015,SKELETON2,20,10,1.5,0.7,Exp.Small,0.7,Exp.Large,0.3,Monsters/monster4
+301013,ORC1,30,10,1.3,0.7,Exp.Small,0.5,Exp.Large,0.5,Monsters/monster5
+351013,ORC2,35,10,1.3,0.7,Exp.Small,0.5,Exp.Large,0.5,Monsters/monster6

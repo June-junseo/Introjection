@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45370e9c1a3602a438f29e0f58582613, type: 3}
+  m_Name: Chaotic_warrior
+  m_EditorClassIdentifier: 
+  id: 24201
+  type: 2
+  monsterName: Chaotic_warrior
+  baseHp: 200
+  baseAtk: 40
+  speed: 2
+  atkSpeed: 0.7
+  prefab: {fileID: 0}
+  drop1: Gold
+  drop1MaxCount: 300
+  drop1MinCount: 300
+  drop2: 
+  drop2MaxCount: 0
+  drop2MinCount: 0

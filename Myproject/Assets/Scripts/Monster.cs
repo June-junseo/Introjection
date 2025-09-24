@@ -1,60 +1,65 @@
-using System.Threading;
 using UnityEngine;
 
 public class Monster : MonoBehaviour
 {
-    private MonsterData data;
+    private NormalMonsterData normalData;
+    private EliteMonsterData eliteData;
     private MonsterPool pool;
     private Rigidbody2D rb;
     private Animator animator;
     private SpriteRenderer spriteRenderer;
 
-    private Rigidbody2D target; 
+    private Rigidbody2D target;
     private float hp;
 
+    private bool isDead = false;
     private bool isKnockback = false;
     private Vector2 knockbackTarget;
-    private float knockbackSpeed = 5f;
+    private float knockbackSpeed;
     private float knockbackTolerance = 0.05f;
+    private float fadeDuration = 1f;
+    private float fadeTimer;
+    private float knockbackMaxTime = 0.3f;
+    private float knockbackTimer;
 
-    private bool isDead = false;
-    private float fadeDuration = 1.0f;   
-    private float fadeTimer = 0f;
-
-    private Player player;
+    public Player player;
     public GameObject expPrefab;
-
     private PoolManager poolManager;
+    private Collider2D col;
 
-
-    public void Init(MonsterData data, MonsterPool pool, Rigidbody2D target, PoolManager poolManager)
+    #region Init
+    public void Init(NormalMonsterData data, MonsterPool pool, Rigidbody2D target, PoolManager poolManager)
     {
-        this.data = data;
+        normalData = data;
+        eliteData = null;
         this.pool = pool;
         this.target = target;
         this.poolManager = poolManager;
-        hp = data.maxHp;
+        hp = normalData.baseHp;
     }
 
-    public void Init(Player player)
+    public void Init(EliteMonsterData data, MonsterPool pool, Rigidbody2D target, PoolManager poolManager)
     {
-        GetComponent<Reposition>().player = player;
+        eliteData = data;
+        normalData = null;
+        this.pool = pool;
+        this.target = target;
+        this.poolManager = poolManager;
+        hp = eliteData.baseHp;
     }
+    #endregion
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        col = GetComponent<Collider2D>();
     }
 
     private void OnEnable()
     {
-        if (data != null)
-        {
-            hp = data.maxHp;
-        }
-
+        hp = normalData != null ? normalData.baseHp : (eliteData != null ? eliteData.baseHp : 1f);
         isDead = false;
 
         if (spriteRenderer != null)
@@ -63,55 +68,32 @@ public class Monster : MonoBehaviour
             c.a = 1f;
             spriteRenderer.color = c;
         }
-
     }
 
     private void FixedUpdate()
     {
-
-        if (isDead)
-        {
-            HandleFade();
-            return;
+        if (isDead) 
+        { 
+            HandleFade(); return; 
         }
-        if (isKnockback)
+
+        if (isKnockback) 
         {
-            Vector2 current = rb != null ? rb.position : (Vector2)transform.position;
-            Vector2 next = Vector2.MoveTowards(current, knockbackTarget, knockbackSpeed * Time.fixedDeltaTime);
-
-            if (rb != null)
-            {
-                rb.MovePosition(next);
-            }
-            else
-            {
-                transform.position = next;
-            }
-
-            if (Vector2.Distance(next, knockbackTarget) <= knockbackTolerance)
-            {
-                EndKnockback();
-            }
-
+            HandleKnockback(); 
             return; 
         }
-
 
         if (target == null)
         {
             return;
         }
 
-            Vector2 dirVec = target.position - rb.position;
+        Vector2 dirVec = target.position - rb.position;
         if (dirVec.sqrMagnitude > 0.01f)
         {
-            Vector2 nextVec = dirVec.normalized * data.speed * Time.fixedDeltaTime;
-            rb.MovePosition(rb.position + nextVec);
-
+            rb.MovePosition(rb.position + dirVec.normalized * GetSpeed() * Time.fixedDeltaTime);
             animator?.SetBool("isWalking", true);
-
-            if (dirVec.x != 0)
-                spriteRenderer.flipX = dirVec.x < 0;
+            spriteRenderer.flipX = dirVec.x < 0;
         }
         else
         {
@@ -119,66 +101,47 @@ public class Monster : MonoBehaviour
         }
     }
 
-    private void HandleFade()
-    {
-        if (fadeTimer > 0f)
-        {
-            fadeTimer -= Time.fixedDeltaTime;
+    private float GetSpeed() => normalData != null ? normalData.speed : eliteData != null ? eliteData.speed : 1f;
+    private float GetDamage() => normalData != null ? normalData.baseAtk : eliteData != null ? eliteData.baseAtk : 1f;
 
-            if (spriteRenderer != null)
-            {
-                Color c = spriteRenderer.color;
-                c.a = Mathf.Clamp01(fadeTimer / fadeDuration);
-                spriteRenderer.color = c;
-            }
-        }
-        else
+    private void HandleKnockback()
+    {
+        knockbackTimer -= Time.fixedDeltaTime;
+        Vector2 current = rb.position;
+        Vector2 next = Vector2.MoveTowards(current, knockbackTarget, knockbackSpeed * Time.fixedDeltaTime);
+        rb.MovePosition(next);
+
+        if (Vector2.Distance(next, knockbackTarget) <= knockbackTolerance || knockbackTimer <= 0f)
         {
-            pool.Return(data.type, gameObject);
+            EndKnockback();
         }
     }
 
-
-    private void StartKnockback(Vector2 dir, float distance, float speed, float duration = 0f)
+    private void StartKnockback(Vector2 dir, float distance, float speed)
     {
-
         isKnockback = true;
         knockbackSpeed = speed;
         knockbackTarget = (Vector2)transform.position + dir.normalized * distance;
-
-   
+        knockbackTimer = knockbackMaxTime;
     }
 
     private void EndKnockback()
     {
         isKnockback = false;
-
-        if (rb != null)
-        {
-            rb.linearVelocity = Vector2.zero;
-        }
+        rb.linearVelocity = Vector2.zero;
     }
 
-    public void TakeDamage(float dmg, Vector2 ignoredDir, float knockbackDistance = 1f, float knockbackSpeed = 5f, float knockbackDuration = 0f)
+    public void TakeDamage(float dmg, Vector2 ignoredDir, float knockbackDistance = 1f, float knockbackSpeed = 5f)
     {
         hp -= dmg;
-        Debug.Log($"(데미지 {dmg})");
-
-        if (target != null)
-        {
-            Vector2 knockbackDir = ((Vector2)rb.position - (Vector2)target.position).normalized;
-            StartKnockback(knockbackDir, knockbackDistance, knockbackSpeed, knockbackDuration);
-        }
-        else
-        {
-            StartKnockback(ignoredDir, knockbackDistance, knockbackSpeed, knockbackDuration);
-        }
+        Vector2 knockbackDir = target != null ? ((Vector2)rb.position - (Vector2)target.position).normalized : ignoredDir;
+        StartKnockback(knockbackDir, knockbackDistance, knockbackSpeed);
 
         if (hp <= 0)
         {
             Die(player);
         }
-    } 
+    }
 
     public void Die(Player player)
     {
@@ -187,63 +150,66 @@ public class Monster : MonoBehaviour
             return;
         }
 
-            isDead = true;
+        isDead = true;
 
-        if (animator != null)
+        animator?.SetTrigger("Dead");
+
+        if (col != null)
         {
-            animator.SetTrigger("Dead");
+            col.enabled = false;
         }
 
         if (expPrefab != null && poolManager != null)
         {
-            itemPrefabId idComp = expPrefab.GetComponent<itemPrefabId>();
+            var idComp = expPrefab.GetComponent<itemPrefabId>();
             if (idComp != null)
             {
                 int expId = idComp.id;
                 GameObject expObj = poolManager.Get(expId);
-
                 if (expObj != null)
                 {
                     expObj.transform.position = transform.position;
-
                     ExpItem expItem = expObj.GetComponent<ExpItem>();
                     if (expItem != null)
                     {
                         expItem.Init(player, poolManager);
                     }
-                    else
-                    {
-                        Debug.LogWarning("ExpItem 컴포넌트가 expPrefab에 없음");
-                    }
                 }
-                else
-                {
-                    Debug.LogWarning($"PoolManager에서 id {expId}에 해당하는 객체를 찾지 못함");
-                }
-            }
-            else
-            {
-                Debug.LogWarning("expPrefab에 itemPrefabId 컴포넌트가 없음");
             }
         }
-
 
         isKnockback = false;
         fadeTimer = fadeDuration;
     }
 
+    private void HandleFade()
+    {
+        fadeTimer -= Time.fixedDeltaTime;
+        if (fadeTimer > 0f && spriteRenderer != null)
+        {
+            Color c = spriteRenderer.color;
+            c.a = Mathf.Clamp01(fadeTimer / fadeDuration);
+            spriteRenderer.color = c;
+        }
+        else
+        {
+            int id = normalData != null ? normalData.id : eliteData != null ? eliteData.id : 0;
+
+            if (col != null)
+            {
+                col.enabled = true;
+            }
+
+            pool?.Return(id, gameObject);
+        }
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(isDead)
+        Player p = collision.GetComponent<Player>();
+        if (p != null)
         {
-            return;
+            p.TakeDamage(GetDamage());
         }
-
-        Player player = collision.GetComponent<Player>();
-        if (player != null && data != null)  
-        {
-            player.TakeDamage(data.damage);
-        }
-
     }
 }

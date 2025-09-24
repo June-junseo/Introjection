@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d4c3b8bcf7ebfa4e942f0f3a86582e2, type: 3}
+  m_Name: SLIME1
+  m_EditorClassIdentifier: 
+  id: 100510
+  type: 0
+  monsterName: SLIME1
+  baseHp: 10
+  baseAtk: 5
+  speed: 1
+  atkSpeed: 0.7
+  prefab: {fileID: 593541880334608524, guid: 7ce20bd785fcac540a21a66f153b21ce, type: 3}
+  drop1: Exp.Small
+  drop1Rate: 0.6
+  drop2: Exp.Large
+  drop2Rate: 0.1

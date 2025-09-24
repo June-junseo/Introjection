@@ -1,0 +1,8 @@
+ID,MONSTER_NAME,MONSTER_TYPE,Base_Hp,Base_Atk,SPEED,ATK.SPEED,DROP1,DROP1_MaxCount,DROP1_MinCount,DROP2,DROP2_MaxCount,DROP2_MinCount,PrefabPath
+24201,Chaotic_warrior,2,200,40,2.0,0.7,Gold,300,300,,,,Monsters/Boss1
+22652,Chaotic_wizard,2,180,25,1.5,0.7,Gold,250,250,,,,Monsters/Boss2
+22953,Chaotic_archer,2,180,28,1.5,0.7,Gold,100,100,,,,Monsters/Boss3
+22834,Chaotic_rogue,2,180,26,2.3,0.7,Gold,60,60,,,,Monsters/Boss4
+11455,Elite orc,1,85,13,1.5,0.7,Gold,30,25,Exp.Small,5,5,Monsters/Elite1
+11116,Elite slime,1,100,10,1.1,0.7,Gold,30,25,Exp.Small,5,5,Monsters/Elite2
+11477,Elite skeleton,1,70,13,1.7,0.7,Gold,30,25,Exp.Small,5,5,Monsters/Elite3

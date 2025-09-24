@@ -16,6 +16,7 @@ public class SelectSkillUi : MonoBehaviour
         public Button button;
         public Image icon;
         public TMP_Text text;
+        public TMP_Text DecText;
     }
     private List<(bool isActive, SkillData active, PassiveSkillData passive)> selectedForUi
         = new List<(bool, SkillData, PassiveSkillData)>();
@@ -55,10 +56,28 @@ public class SelectSkillUi : MonoBehaviour
         HashSet<string> usedSkillGroups = new HashSet<string>();
         HashSet<string> usedPassiveGroups = new HashSet<string>();
 
+        int ownedActiveCount = skillManager.GetOwnedActiveSkills().Count;
+        int ownedPassiveCount = skillManager.PassiveSkills.Count;
+
+        int maxActive = 3;
+        int maxPassive = 5;
+
+        // === 액티브 후보 ===
         foreach (var data in skillManager.skillDatas)
         {
             var current = skillManager.GetCurrentSkill(data.skillGroup);
-            SkillData candidate = current != null ? skillManager.GetNextLevelSkill(current) : (data.level == 1 ? data : null);
+            SkillData candidate = null;
+
+            if (current != null)
+            {
+                // 이미 보유 중이면 → 레벨업 후보
+                candidate = skillManager.GetNextLevelSkill(current);
+            }
+            else if (ownedActiveCount < maxActive && data.level == 1)
+            {
+                // 슬롯이 아직 여유 있을 때만 Lv1 신규 허용
+                candidate = data;
+            }
 
             if (candidate != null && !usedSkillGroups.Contains(candidate.skillGroup))
             {
@@ -67,6 +86,7 @@ public class SelectSkillUi : MonoBehaviour
             }
         }
 
+        // === 패시브 후보 ===
         foreach (var p in skillManager.PassiveSkills)
         {
             var next = skillManager.GetNextLevelPassive(p);
@@ -77,23 +97,26 @@ public class SelectSkillUi : MonoBehaviour
             }
         }
 
-        foreach (var p in CSVLoader.LoadCSV<PassiveSkillData>(skillManager.passiveCSV))
+        // 슬롯 여유 있을 때만 Lv1 신규 패시브 후보 추가
+        if (ownedPassiveCount < maxPassive)
         {
-            if (skillManager.GetCurrentPassive(p.passiveGroup) == null
-                && p.level == 1
-                && !usedPassiveGroups.Contains(p.passiveGroup))
+            foreach (var p in CSVLoader.LoadCSV<PassiveSkillData>(skillManager.passiveCSV))
             {
-                passiveCandidates.Add(p);
-                usedPassiveGroups.Add(p.passiveGroup);
+                if (skillManager.GetCurrentPassive(p.passiveGroup) == null
+                    && p.level == 1
+                    && !usedPassiveGroups.Contains(p.passiveGroup))
+                {
+                    passiveCandidates.Add(p);
+                    usedPassiveGroups.Add(p.passiveGroup);
+                }
             }
         }
 
+        // === 랜덤 3개 뽑기 ===
         for (int i = 0; i < 3; i++)
         {
             if (activeCandidates.Count == 0 && passiveCandidates.Count == 0)
-            {
                 break;
-            }
 
             bool chooseActive = (Random.value < 0.5f && activeCandidates.Count > 0) || passiveCandidates.Count == 0;
 
@@ -116,7 +139,7 @@ public class SelectSkillUi : MonoBehaviour
             UpdateButton(skillButtons[i], i);
         }
 
-        Debug.Log($"Selected for UI: {selectedForUi.Count} items");
+        Debug.Log($"Selected for UI: {selectedForUi.Count} (Active {ownedActiveCount}/{maxActive}, Passive {ownedPassiveCount}/{maxPassive})");
     }
 
     private void UpdateButton(SkillButtonUi btnUi, int index)
@@ -132,25 +155,48 @@ public class SelectSkillUi : MonoBehaviour
 
         string iconPath = "Icons/DefaultIcon";
         string text = "";
+        string dec = "";
 
         if (sel.isActive)
         {
             text = $"{sel.active.skillName}";
+            dec = $"{sel.active.description}";
+
             if (!string.IsNullOrEmpty(sel.active.iconPath))
             {
                 iconPath = sel.active.iconPath;
+            }
+            else
+            {
+                var level1 = skillManager.skillDatas.Find(s => s.skillGroup == sel.active.skillGroup && s.level == 1);
+                if (level1 != null && !string.IsNullOrEmpty(level1.iconPath))
+                {
+                    iconPath = level1.iconPath;
+                }
             }
         }
         else
         {
             text = $"{sel.passive.skillName}";
+            dec = $"{sel.passive.flavorText}";
+
             if (!string.IsNullOrEmpty(sel.passive.iconPath))
             {
                 iconPath = sel.passive.iconPath;
             }
+            else
+            {
+                var level1 = CSVLoader.LoadCSV<PassiveSkillData>(skillManager.passiveCSV)
+                    .Find(p => p.passiveGroup == sel.passive.passiveGroup && p.level == 1);
+                if (level1 != null && !string.IsNullOrEmpty(level1.iconPath))
+                {
+                    iconPath = level1.iconPath;
+                }
+            }
         }
 
         btnUi.text.text = text;
+        btnUi.DecText.text = dec;
 
         Sprite icon = Resources.Load<Sprite>(iconPath);
 
@@ -164,6 +210,7 @@ public class SelectSkillUi : MonoBehaviour
             btnUi.icon.sprite = Resources.Load<Sprite>("Icons/DefaultIcon");
         }
     }
+
 
 
     private void OnSkillClicked(int index)

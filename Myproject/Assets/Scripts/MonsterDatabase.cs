@@ -1,13 +1,26 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "MonsterDatabase", menuName = "Game/Monster Database", order = 10)]
+[CreateAssetMenu(fileName = "MonsterDatabase", menuName = "Game/Monster Database")]
 public class MonsterDatabase : ScriptableObject
 {
-    public MonsterData[] monsters;
+    public NormalMonsterData[] normalMonsters;
+    public EliteMonsterData[] eliteMonsters;
 
-    public MonsterData GetData(MonsterType type)
+    public NormalMonsterData GetNormal(MonsterType type)
     {
-        foreach (var m in monsters)
+        foreach (var m in normalMonsters)
+        {
+            if (m.type == type)
+            {
+                return m;
+            }
+        }
+        return null;
+    }
+
+    public EliteMonsterData GetElite(MonsterType type)
+    {
+        foreach (var m in eliteMonsters)
         {
             if (m.type == type)
             {

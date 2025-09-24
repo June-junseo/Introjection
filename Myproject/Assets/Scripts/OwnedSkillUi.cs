@@ -21,13 +21,15 @@ public class OwnedSkillUi : MonoBehaviour
 
     public void RefreshOwnedSkills()
     {
-        var ownedActive = skillManager.GetOwnedActiveSkills(); 
+        var ownedActive = skillManager.GetOwnedActiveSkills();
+
         for (int i = 0; i < activeSkillSlots.Length; i++)
         {
             if (i < ownedActive.Count)
             {
                 var skill = ownedActive[i];
-                UpdateSkillSlot(activeSkillSlots[i], skill.Data.iconPath);
+                string iconPath = GetBaseIconPath(skill.Data.skillGroup, true);
+                UpdateSkillSlot(activeSkillSlots[i], iconPath);
             }
             else
             {
@@ -36,18 +38,43 @@ public class OwnedSkillUi : MonoBehaviour
         }
 
         var ownedPassive = skillManager.PassiveSkills;
+
         for (int i = 0; i < passiveSkillSlots.Length; i++)
         {
             if (i < ownedPassive.Count)
             {
                 var p = ownedPassive[i];
-                UpdateSkillSlot(passiveSkillSlots[i], p.iconPath);
+                string iconPath = GetBaseIconPath(p.passiveGroup, false);
+                UpdateSkillSlot(passiveSkillSlots[i], iconPath);
             }
             else
             {
                 ClearSkillSlot(passiveSkillSlots[i]);
             }
         }
+    }
+
+    private string GetBaseIconPath(string group, bool isActive)
+    {
+        if (isActive)
+        {
+            var level1 = skillManager.skillDatas.Find(s => s.skillGroup == group && s.level == 1);
+            if (level1 != null && !string.IsNullOrEmpty(level1.iconPath))
+            {
+                return level1.iconPath;
+            }
+        }
+        else
+        {
+            var allPassive = CSVLoader.LoadCSV<PassiveSkillData>(skillManager.passiveCSV);
+            var level1 = allPassive.Find(p => p.passiveGroup == group && p.level == 1);
+            if (level1 != null && !string.IsNullOrEmpty(level1.iconPath))
+            {
+                return level1.iconPath;
+            }
+        }
+
+        return "Icons/DefaultIcon"; 
     }
 
     private void UpdateSkillSlot(SkillButtonUi slot, string iconPath)

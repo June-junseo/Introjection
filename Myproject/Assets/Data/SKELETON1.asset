@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d4c3b8bcf7ebfa4e942f0f3a86582e2, type: 3}
+  m_Name: SKELETON1
+  m_EditorClassIdentifier: 
+  id: 121015
+  type: 0
+  monsterName: SKELETON1
+  baseHp: 12
+  baseAtk: 10
+  speed: 1.5
+  atkSpeed: 0.7
+  prefab: {fileID: 0}
+  drop1: Exp.Small
+  drop1Rate: 0.9
+  drop2: Exp.Large
+  drop2Rate: 0.1
