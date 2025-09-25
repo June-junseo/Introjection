@@ -30,6 +30,5 @@ MonoBehaviour:
   criticalRate: 0.5
   statusEffect: 0
   unlockCondition: 
-  iconPath: 
+  iconPath: Icons/Skill_340
   description: 
-  skillPrefab: {fileID: 0}

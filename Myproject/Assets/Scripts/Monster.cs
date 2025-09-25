@@ -22,6 +22,8 @@ public class Monster : MonoBehaviour
     private float knockbackMaxTime = 0.3f;
     private float knockbackTimer;
 
+    public bool isElite;
+    public GameObject chestPrefab;
     public Player player;
     public GameObject expPrefab;
     private PoolManager poolManager;
@@ -89,6 +91,7 @@ public class Monster : MonoBehaviour
         }
 
         Vector2 dirVec = target.position - rb.position;
+
         if (dirVec.sqrMagnitude > 0.01f)
         {
             rb.MovePosition(rb.position + dirVec.normalized * GetSpeed() * Time.fixedDeltaTime);
@@ -170,6 +173,7 @@ public class Monster : MonoBehaviour
                 {
                     expObj.transform.position = transform.position;
                     ExpItem expItem = expObj.GetComponent<ExpItem>();
+
                     if (expItem != null)
                     {
                         expItem.Init(player, poolManager);
@@ -180,6 +184,13 @@ public class Monster : MonoBehaviour
 
         isKnockback = false;
         fadeTimer = fadeDuration;
+
+        if (isElite && chestPrefab != null)
+        {
+            Instantiate(chestPrefab, transform.position, Quaternion.identity);
+        }
+
+        Destroy(gameObject);
     }
 
     private void HandleFade()

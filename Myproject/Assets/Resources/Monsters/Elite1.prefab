@@ -126,6 +126,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1755135a7fa884b48ad25216ba5143da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isElite: 1
+  chestPrefab: {fileID: 329928867813557571, guid: 4ddb09ce9470cb84486997a5d1b78c4c, type: 3}
   player: {fileID: 0}
   expPrefab: {fileID: 4733465319496568917, guid: e5ebfd8ddfa9edf4cb00cf7d3f6181c1, type: 3}
 --- !u!61 &3024975527278727987

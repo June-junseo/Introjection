@@ -21,7 +21,7 @@ public class MonsterPool : MonoBehaviour
             }
 
             Queue<GameObject> queue = new Queue<GameObject>();
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 200; i++)
             {
                 GameObject obj = Instantiate(data.prefab);
                 obj.SetActive(false);
@@ -45,7 +45,6 @@ public class MonsterPool : MonoBehaviour
             }
 
             Queue<GameObject> queue = new Queue<GameObject>();
-
             for (int i = 0; i < 3; i++)
             {
                 GameObject obj = Instantiate(data.prefab);
@@ -72,15 +71,38 @@ public class MonsterPool : MonoBehaviour
         }
 
         var queue = poolDict[id];
-        GameObject obj = queue.Count > 0 ? queue.Dequeue() : null;
+        GameObject obj;
 
-        if (obj == null)
+        if (queue.Count > 0)
         {
-            Debug.LogWarning($"MonsterPool: {id} 인스턴스 부족");
-            return null;
+            obj = queue.Dequeue();
+        }
+        else
+        {
+            Debug.Log($"MonsterPool: {id} 풀 부족 → 새 인스턴스 생성");
+
+            var normalData = normalMonsters.Find(m => m.id == id);
+            var eliteData = eliteMonsters.Find(m => m.id == id);
+
+            GameObject prefab = normalData != null ? normalData.prefab : eliteData.prefab;
+            obj = Instantiate(prefab);
+
+            Monster monster = obj.GetComponent<Monster>();
+            if (monster != null)
+            {
+                if (normalData != null)
+                {
+                    monster.Init(normalData, this, playerTarget, poolManager);
+                }
+                else if (eliteData != null)
+                {
+                    monster.Init(eliteData, this, playerTarget, poolManager);
+                }
+            }
         }
 
         obj.transform.position = position;
+
         obj.SetActive(true);
         return obj;
     }

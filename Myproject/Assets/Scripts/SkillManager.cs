@@ -43,7 +43,10 @@ public class SkillManager : MonoBehaviour
 
     public void AddSkill(SkillData newSkillData)
     {
-        if (newSkillData == null) return;
+        if (newSkillData == null)
+        {
+            return;
+        }
 
         ISkill existing = skills.Find(s => s.Data != null && s.Data.skillGroup == newSkillData.skillGroup);
 

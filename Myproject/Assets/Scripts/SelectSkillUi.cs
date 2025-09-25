@@ -62,7 +62,6 @@ public class SelectSkillUi : MonoBehaviour
         int maxActive = 3;
         int maxPassive = 5;
 
-        // === 액티브 후보 ===
         foreach (var data in skillManager.skillDatas)
         {
             var current = skillManager.GetCurrentSkill(data.skillGroup);
@@ -70,12 +69,10 @@ public class SelectSkillUi : MonoBehaviour
 
             if (current != null)
             {
-                // 이미 보유 중이면 → 레벨업 후보
                 candidate = skillManager.GetNextLevelSkill(current);
             }
             else if (ownedActiveCount < maxActive && data.level == 1)
             {
-                // 슬롯이 아직 여유 있을 때만 Lv1 신규 허용
                 candidate = data;
             }
 
@@ -86,7 +83,6 @@ public class SelectSkillUi : MonoBehaviour
             }
         }
 
-        // === 패시브 후보 ===
         foreach (var p in skillManager.PassiveSkills)
         {
             var next = skillManager.GetNextLevelPassive(p);
@@ -97,7 +93,6 @@ public class SelectSkillUi : MonoBehaviour
             }
         }
 
-        // 슬롯 여유 있을 때만 Lv1 신규 패시브 후보 추가
         if (ownedPassiveCount < maxPassive)
         {
             foreach (var p in CSVLoader.LoadCSV<PassiveSkillData>(skillManager.passiveCSV))
@@ -112,7 +107,6 @@ public class SelectSkillUi : MonoBehaviour
             }
         }
 
-        // === 랜덤 3개 뽑기 ===
         for (int i = 0; i < 3; i++)
         {
             if (activeCandidates.Count == 0 && passiveCandidates.Count == 0)
