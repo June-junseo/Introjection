@@ -17,6 +17,8 @@ public class Player : MonoBehaviour
     [SerializeField]
     private VirtualJoystick joystick;
 
+    private Vector2 lastNonZeroVec = Vector2.left;
+
     private Transform spumRoot;
 
     public event System.Action<int, int, int> onExpChanged;
@@ -100,6 +102,23 @@ public class Player : MonoBehaviour
         else
         {
             vec = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+        }
+
+        if (vec != Vector2.zero)
+        {
+            lastNonZeroVec = vec.normalized;
+        }
+    }
+
+    public Vector2 GetFacingDirection()
+    {
+        if (vec != Vector2.zero)
+        {
+            return vec.normalized;
+        }
+        else
+        {
+            return lastNonZeroVec;
         }
     }
 

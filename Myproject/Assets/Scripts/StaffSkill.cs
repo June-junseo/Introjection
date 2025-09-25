@@ -61,17 +61,12 @@ public class StaffSkill : ISkill
 
             if (staff != null)
             {
-                Vector3 dir = player.vec;
-                if (dir == Vector3.zero)
-                {
-                    dir = Vector3.right;
-                }
-                dir = dir.normalized;
+                Vector3 dir = player.GetFacingDirection();
 
-                float angleOffset = (i - Data.projectileCount / 2f) * 10f;
+                float angleOffset = (i - (Data.projectileCount - 1) / 2f) * 10f;
                 dir = Quaternion.Euler(0, 0, angleOffset) * dir;
 
-                staff.Init(dir, finalDamage, 10f, 10f);
+                staff.Init(dir.normalized, finalDamage, 10f, 10f);
             }
         }
 

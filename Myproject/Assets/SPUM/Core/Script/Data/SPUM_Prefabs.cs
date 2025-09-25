@@ -145,10 +145,16 @@ public class SPUM_Prefabs : MonoBehaviour
 
     public void PlayAnimation(PlayerState PlayState, int index)
     {
-        if (!StateAnimationPairs.ContainsKey(PlayState.ToString())) return;
+        if (!StateAnimationPairs.ContainsKey(PlayState.ToString()))
+        {
+            return;
+        }
 
         var animations = StateAnimationPairs[PlayState.ToString()];
-        if (animations.Count == 0 || index < 0 || index >= animations.Count) return;
+        if (animations.Count == 0 || index < 0 || index >= animations.Count)
+        {
+            return;
+        }
 
         OverrideController[PlayState.ToString()] = animations[index];
 

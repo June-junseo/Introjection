@@ -25,7 +25,6 @@ public class Monster : MonoBehaviour
     public bool isElite;
     public GameObject chestPrefab;
     public Player player;
-    public GameObject expPrefab;
     private PoolManager poolManager;
     private Collider2D col;
 
@@ -76,22 +75,21 @@ public class Monster : MonoBehaviour
     {
         if (isDead) 
         { 
-            HandleFade(); return; 
-        }
-
-        if (isKnockback) 
-        {
-            HandleKnockback(); 
+            HandleFade();
             return; 
         }
-
+        if (isKnockback)
+        { 
+            HandleKnockback();
+            return;
+        }
         if (target == null)
         {
             return;
         }
 
-        Vector2 dirVec = target.position - rb.position;
 
+            Vector2 dirVec = target.position - rb.position;
         if (dirVec.sqrMagnitude > 0.01f)
         {
             rb.MovePosition(rb.position + dirVec.normalized * GetSpeed() * Time.fixedDeltaTime);
@@ -110,8 +108,7 @@ public class Monster : MonoBehaviour
     private void HandleKnockback()
     {
         knockbackTimer -= Time.fixedDeltaTime;
-        Vector2 current = rb.position;
-        Vector2 next = Vector2.MoveTowards(current, knockbackTarget, knockbackSpeed * Time.fixedDeltaTime);
+        Vector2 next = Vector2.MoveTowards(rb.position, knockbackTarget, knockbackSpeed * Time.fixedDeltaTime);
         rb.MovePosition(next);
 
         if (Vector2.Distance(next, knockbackTarget) <= knockbackTolerance || knockbackTimer <= 0f)
@@ -146,40 +143,22 @@ public class Monster : MonoBehaviour
         }
     }
 
-    public void Die(Player player)
+    private void Die(Player player)
     {
-        if (isDead)
-        {
-            return;
-        }
-
+        if (isDead) return;
         isDead = true;
 
         animator?.SetTrigger("Dead");
+        if (col != null) col.enabled = false;
 
-        if (col != null)
+        if (normalData != null)
         {
-            col.enabled = false;
+            TryDrop_Normal_Exclusive(normalData.drop1, normalData.drop1Rate, normalData.drop2, normalData.drop2Rate, player);
         }
-
-        if (expPrefab != null && poolManager != null)
+        else if (eliteData != null)
         {
-            var idComp = expPrefab.GetComponent<itemPrefabId>();
-            if (idComp != null)
-            {
-                int expId = idComp.id;
-                GameObject expObj = poolManager.Get(expId);
-                if (expObj != null)
-                {
-                    expObj.transform.position = transform.position;
-                    ExpItem expItem = expObj.GetComponent<ExpItem>();
-
-                    if (expItem != null)
-                    {
-                        expItem.Init(player, poolManager);
-                    }
-                }
-            }
+            TryDrop_Elite_Exclusive(eliteData.drop1, eliteData.drop1MinCount, eliteData.drop1MaxCount, eliteData.drop2MinCount,
+                                    eliteData.drop2, eliteData.drop2MinCount, eliteData.drop2MaxCount, eliteData.drop2MinCount, player);
         }
 
         isKnockback = false;
@@ -191,6 +170,70 @@ public class Monster : MonoBehaviour
         }
 
         Destroy(gameObject);
+    }
+
+    private void TryDrop_Normal_Exclusive(string drop1, float drop1Rate, string drop2, float drop2Rate, Player player)
+    {
+        float r = Random.value; 
+        if (r < drop1Rate)
+        {
+            SpawnDropFromPool(drop1, player);
+        }
+        else if (r < drop1Rate + drop2Rate)
+        {
+            SpawnDropFromPool(drop2, player);
+        }
+
+    }
+
+    private void TryDrop_Elite_Exclusive(string drop1, int min1, int max1, float drop1Rate,
+                                         string drop2, int min2, int max2, float drop2Rate, Player player)
+    {
+        float r = Random.value;
+        float totalRate = Mathf.Clamp01(drop1Rate + drop2Rate);
+
+        if (r < drop1Rate)
+        {
+            int count = Random.Range(min1, max1 + 1);
+            for (int i = 0; i < count; i++)
+                SpawnDropFromPool(drop1, player);
+        }
+        else if (r < totalRate)
+        {
+            int count = Random.Range(min2, max2 + 1);
+            for (int i = 0; i < count; i++)
+                SpawnDropFromPool(drop2, player);
+        }
+    }
+
+
+    private void SpawnDropFromPool(string itemName, Player player)
+    {
+        GameObject prefab = Resources.Load<GameObject>(itemName);
+        if (prefab == null)
+        {
+            Debug.LogWarning($"Drop prefab {itemName} not found in Resources!");
+            return;
+        }
+
+        var idComp = prefab.GetComponent<itemPrefabId>();
+        if (idComp != null && poolManager != null)
+        {
+            GameObject dropObj = poolManager.Get(idComp.id);
+            if (dropObj != null)
+            {
+                dropObj.transform.position = transform.position + (Vector3)(Random.insideUnitCircle * 0.3f);
+                ExpItem expItem = dropObj.GetComponent<ExpItem>();
+                if (expItem != null)
+                {
+                    expItem.Init(player, poolManager);
+                }
+            }
+        }
+        else
+        {
+            Instantiate(prefab, transform.position + (Vector3)(Random.insideUnitCircle * 0.3f), Quaternion.identity);
+        }
     }
 
     private void HandleFade()
@@ -205,13 +248,12 @@ public class Monster : MonoBehaviour
         else
         {
             int id = normalData != null ? normalData.id : eliteData != null ? eliteData.id : 0;
-
             if (col != null)
             {
                 col.enabled = true;
             }
 
-            pool?.Return(id, gameObject);
+                pool?.Return(id, gameObject);
         }
     }
 

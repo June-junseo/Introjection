@@ -29,10 +29,7 @@ public class LongSwordSkill : ISkill
             skillRoot = rootObj.transform;
         }
 
-        for (int i = skillRoot.childCount - 1; i >= 0; i--)
-        {
-            pool.Release(skillRoot.GetChild(i).gameObject);
-        }
+        ClearSwords();
     }
 
     public void UpdateSkill()
@@ -43,34 +40,64 @@ public class LongSwordSkill : ISkill
         }
 
         cooldownTimer -= Time.deltaTime;
-
         if (cooldownTimer > 0f)
         {
             return;
         }
 
-        Vector2 direction = player.vec;
-        if (direction == Vector2.zero)
-        {
-            direction = Vector2.right;
-        }
+        FireSwords();
 
-        GameObject swordObj = pool.Get(Data.id);
+        cooldownTimer = stats.GetFinalCooldown(Data.cooltime);
+    }
 
-        if (swordObj != null)
+    private void FireSwords()
+    {
+        Vector2 forwardDir = player.GetFacingDirection();
+
+        int count = Data.projectileCount;
+        float forwardDistance = 1.5f;
+        float spreadAngle = 60f;
+
+        float playerAngle = Mathf.Atan2(forwardDir.y, forwardDir.x) * Mathf.Rad2Deg;
+
+        for (int i = 0; i < count; i++)
         {
-            swordObj.transform.position = player.transform.position;
+            GameObject swordObj = pool.Get(Data.id);
+
+            if (swordObj == null)
+            {
+                continue;
+            }
+
+            float angleOffset = 0f;
+
+            if (count > 1)
+            {
+                angleOffset = -spreadAngle + (2f * spreadAngle) * i / (count - 1);
+            }
+
+            Vector2 fireDir = Quaternion.Euler(0, 0, playerAngle + angleOffset) * Vector2.right;
+
+            Vector2 spawnPos = (Vector2)player.transform.position + fireDir.normalized * forwardDistance;
+
+            swordObj.transform.position = spawnPos;
             swordObj.transform.SetParent(skillRoot);
 
             LongSword sword = swordObj.GetComponent<LongSword>();
             if (sword != null)
             {
-
                 float finalDamage = stats.GetFinalAttack() * Data.damagePercent;
-                sword.Init(finalDamage, -1, direction);
+                sword.Init(finalDamage, -1, fireDir);
             }
         }
+    }
 
-        cooldownTimer = stats.GetFinalCooldown(Data.cooltime);
+
+    private void ClearSwords()
+    {
+        for (int i = skillRoot.childCount - 1; i >= 0; i--)
+        {
+            pool.Release(skillRoot.GetChild(i).gameObject);
+        }
     }
 }

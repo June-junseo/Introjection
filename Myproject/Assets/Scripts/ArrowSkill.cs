@@ -39,6 +39,7 @@ public class ArrowSkill : ISkill
         }
 
         cooldownTimer -= Time.deltaTime;
+
         if (cooldownTimer > 0f)
         {
             return;
@@ -61,17 +62,12 @@ public class ArrowSkill : ISkill
 
             if (arrow != null)
             {
-                Vector3 dir = player.vec;
-                if (dir == Vector3.zero)
-                {
-                    dir = Vector3.right;
-                }
-                dir = dir.normalized;
+                Vector3 dir = player.GetFacingDirection();
 
-                float angleOffset = (i - Data.projectileCount / 2f) * 10f;
+                float angleOffset = (i - (Data.projectileCount - 1) / 2f) * 10f;
                 dir = Quaternion.Euler(0, 0, angleOffset) * dir;
 
-                arrow.Init(dir, finalDamage, 10f, 10f);
+                arrow.Init(dir.normalized, finalDamage, 10f, 10f);
             }
         }
 
