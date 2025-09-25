@@ -57,7 +57,7 @@ public class ArrowSkill : ISkill
             projObj.transform.SetParent(skillRoot);
             projObj.transform.position = parent.position;
 
-            float finalDamage = (baseAttack * Data.damagePercent) * stats.GetFinalAttack();
+            float finalDamage = stats.GetFinalAttack() * Data.damagePercent;
             Arrow arrow = projObj.GetComponent<Arrow>();
 
             if (arrow != null)

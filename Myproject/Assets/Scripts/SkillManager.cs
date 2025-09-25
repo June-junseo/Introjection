@@ -71,44 +71,34 @@ public class SkillManager : MonoBehaviour
     public void AddPassiveSkill(PassiveSkillData newPassive)
     {
         if (newPassive == null)
-        {
             return;
-        }
 
         PassiveSkillData existing = passiveSkills.Find(p => p.passiveGroup == newPassive.passiveGroup);
 
         if (existing != null)
         {
             int levelDiff = newPassive.level - existing.level;
-
             if (levelDiff > 0)
             {
-                PassiveSkillData upgraded = new PassiveSkillData
-                {
-                    passiveGroup = existing.passiveGroup,
-                    skillName = existing.skillName,
-                    level = newPassive.level,
-                    passiveValue = newPassive.passiveValue,
-                    affectAbility = newPassive.affectAbility
-                };
-
-                applier.Apply(upgraded);
+                // 기존 패시브 교체
                 passiveSkills.Remove(existing);
-                passiveSkills.Add(upgraded);
-                Debug.Log($"패시브 레벨업: {upgraded.skillName} Lv.{upgraded.level}");
+                passiveSkills.Add(newPassive);
+                Debug.Log($"패시브 레벨업: {newPassive.skillName} Lv.{newPassive.level}");
             }
+            // 레벨업 후 전체 패시브 재적용
+            applier.ApplyAll(passiveSkills.ToArray());
             return;
         }
 
-        if (newPassive.level != 1)
+        // 신규 패시브 추가
+        if (newPassive.level == 1)
         {
-            return;
+            passiveSkills.Add(newPassive);
+            applier.ApplyAll(passiveSkills.ToArray());
+            Debug.Log($"새 패시브 획득: {newPassive.skillName} Lv.{newPassive.level}");
         }
-
-        passiveSkills.Add(newPassive);
-        applier.Apply(newPassive);
-        Debug.Log($"새 패시브 획득: {newPassive.skillName} Lv.{newPassive.level}");
     }
+
 
     public SkillData GetCurrentSkill(string skillGroup) =>
         skills.Find(s => s.Data.skillGroup == skillGroup)?.Data;

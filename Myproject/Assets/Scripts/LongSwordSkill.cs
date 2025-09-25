@@ -52,6 +52,9 @@ public class LongSwordSkill : ISkill
 
     private void FireSwords()
     {
+
+        ClearSwords();
+        
         Vector2 forwardDir = player.GetFacingDirection();
 
         int count = Data.projectileCount;

@@ -56,7 +56,6 @@ public class Staff : MonoBehaviour
             float knockbackSpeed = 6f;
 
             monster.TakeDamage(damage, knockbackDir, knockbackDistance, knockbackSpeed);
-            gameObject.SetActive(false);
         }
     }
 }

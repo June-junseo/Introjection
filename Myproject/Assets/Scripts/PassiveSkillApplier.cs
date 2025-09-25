@@ -1,5 +1,6 @@
 using System.Diagnostics;
 
+
 public class PassiveSkillApplier
 {
     private CharacterStats stats;
@@ -9,22 +10,31 @@ public class PassiveSkillApplier
         this.stats = stats;
     }
 
-    public void Apply(PassiveSkillData passive)
+    public void ApplyAll(PassiveSkillData[] passives)
+    {
+        stats.ResetStats();
+
+        foreach (var passive in passives)
+        {
+            Apply(passive);
+        }
+    }
+
+
+    private void Apply(PassiveSkillData passive)
     {
         switch (passive.affectAbility)
         {
-            case 0: 
+            case 1: 
                 stats.attackMultiplier += passive.passiveValue;
                 break;
-            case 1: 
+            case 2: 
                 stats.cooldownReduction += passive.passiveValue;
                 break;
-            case 2: 
+            case 3: 
                 stats.moveSpeed += passive.passiveValue;
-                break;
-            default:
-                //Debug.Log($"Unknown affectAbility {passive.affectAbility}");
                 break;
         }
     }
 }
+

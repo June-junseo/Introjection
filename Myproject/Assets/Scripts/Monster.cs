@@ -145,7 +145,10 @@ public class Monster : MonoBehaviour
 
     private void Die(Player player)
     {
-        if (isDead) return;
+        if (isDead)
+        {
+            return;
+        }
         isDead = true;
 
         animator?.SetTrigger("Dead");
@@ -196,13 +199,17 @@ public class Monster : MonoBehaviour
         {
             int count = Random.Range(min1, max1 + 1);
             for (int i = 0; i < count; i++)
+            {
                 SpawnDropFromPool(drop1, player);
+            }
         }
         else if (r < totalRate)
         {
             int count = Random.Range(min2, max2 + 1);
             for (int i = 0; i < count; i++)
+            {
                 SpawnDropFromPool(drop2, player);
+            }
         }
     }
 
