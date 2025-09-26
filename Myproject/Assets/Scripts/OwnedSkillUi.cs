@@ -67,7 +67,9 @@ public class OwnedSkillUi : MonoBehaviour
         else
         {
             var allPassive = CSVLoader.LoadCSV<PassiveSkillData>(skillManager.passiveCSV);
+
             var level1 = allPassive.Find(p => p.passiveGroup == group && p.level == 1);
+
             if (level1 != null && !string.IsNullOrEmpty(level1.iconPath))
             {
                 return level1.iconPath;

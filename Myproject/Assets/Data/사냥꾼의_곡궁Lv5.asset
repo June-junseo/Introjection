@@ -15,7 +15,7 @@ MonoBehaviour:
   id: 1250211520
   skillName: "\uC0AC\uB0E5\uAFBC\uC758 \uACE1\uAD81Lv5"
   skillCategory: 1
-  cooltime: 2.5
+  cooltime: 0.4
   duration: 3
   skillGroup: BOW
   type: 2
@@ -23,7 +23,7 @@ MonoBehaviour:
   tickInterval: 0
   hasProjectile: 1
   canCritical: 1
-  damagePercent: 2.5
+  damagePercent: 1.75
   range: 0
   level: 5
   projectileCount: 5

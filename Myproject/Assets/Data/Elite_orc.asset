@@ -15,7 +15,7 @@ MonoBehaviour:
   id: 11455
   type: 1
   monsterName: Elite orc
-  baseHp: 85
+  baseHp: 150
   baseAtk: 13
   speed: 1.5
   atkSpeed: 0.7

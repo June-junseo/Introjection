@@ -30,6 +30,7 @@ public class Player : MonoBehaviour
     public float maxHp = 50f;
     public float currentHp;
     private bool isDead = false;
+    public int gold = 0;
 
     public SelectSkillUi skillUi;
 
@@ -42,9 +43,7 @@ public class Player : MonoBehaviour
         level = 1;
         currentExp = 0;
         expToLevel = CalculateExpToNextLevel(level);
-
     }
-
 
     public void AddExp(int amount)
     {
@@ -57,6 +56,12 @@ public class Player : MonoBehaviour
         }
 
         onExpChanged?.Invoke(currentExp, expToLevel, level);
+    }
+    public void Heal(int amount)
+    {
+        currentHp += amount;
+        currentHp = Mathf.Clamp(currentHp, 0, maxHp);
+        onHpBarChanged?.Invoke(currentHp, maxHp); 
     }
 
     private void LevelUp()
@@ -81,7 +86,7 @@ public class Player : MonoBehaviour
 
     private int CalculateExpToNextLevel(int lvl)
     {
-        return Mathf.Max(1, Mathf.RoundToInt(3 + Mathf.Pow(lvl, 1.4f)));
+        return Mathf.Max(1, Mathf.RoundToInt(3 + Mathf.Pow(lvl, 1.8f)));
     }
 
     private void Start()
@@ -166,7 +171,10 @@ public class Player : MonoBehaviour
     }
     public void Die()
     {
-        if (isDead) return;
+        if (isDead)
+        {
+            return;
+        }
         isDead = true;
 
         spum.PlayAnimation(PlayerState.DEATH, 0);

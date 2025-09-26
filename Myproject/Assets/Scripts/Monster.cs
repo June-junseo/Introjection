@@ -21,6 +21,7 @@ public class Monster : MonoBehaviour
     private float fadeTimer;
     private float knockbackMaxTime = 0.3f;
     private float knockbackTimer;
+    private float spawnTime;
 
     public bool isElite;
     public GameObject chestPrefab;
@@ -37,6 +38,10 @@ public class Monster : MonoBehaviour
         this.target = target;
         this.poolManager = poolManager;
         hp = normalData.baseHp;
+
+        spawnTime = Time.time;
+        hp = GetScaledHp();
+
     }
 
     public void Init(EliteMonsterData data, MonsterPool pool, Rigidbody2D target, PoolManager poolManager)
@@ -47,6 +52,9 @@ public class Monster : MonoBehaviour
         this.target = target;
         this.poolManager = poolManager;
         hp = eliteData.baseHp;
+
+        spawnTime = Time.time;
+        hp = GetScaledHp();
     }
     #endregion
 
@@ -69,6 +77,22 @@ public class Monster : MonoBehaviour
             c.a = 1f;
             spriteRenderer.color = c;
         }
+    }
+
+    private float GetScaledHp()
+    {
+        float baseHp = normalData != null ? normalData.baseHp : eliteData != null ? eliteData.baseHp : 1f;
+        float elapsedMinutes = (Time.time - spawnTime) / 60f;
+        float growthRate = 0.2f; 
+        return baseHp * (1f + growthRate * elapsedMinutes);
+    }
+
+    private float GetScaledDamage()
+    {
+        float baseAtk = normalData != null ? normalData.baseAtk : eliteData != null ? eliteData.baseAtk : 1f;
+        float elapsedMinutes = (Time.time - spawnTime) / 60f;
+        float growthRate = 0.15f; 
+        return baseAtk * (1f + growthRate * elapsedMinutes);
     }
 
     private void FixedUpdate()

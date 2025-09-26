@@ -1,6 +1,4 @@
 using UnityEngine;
-
-// 캐릭터 스탯
 public class CharacterStats : MonoBehaviour
 {
     public float baseAttack = 10f;

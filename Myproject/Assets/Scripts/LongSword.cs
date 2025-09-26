@@ -4,6 +4,7 @@ public class LongSword : MonoBehaviour
 {
     private float damage;
     private int per;
+    private Player player;
 
     [SerializeField] private ParticleSystem attackEffect;
     private Collider2D swordCollider;
@@ -18,10 +19,11 @@ public class LongSword : MonoBehaviour
         }
     }
 
-    public void Init(float damage, int per, Vector2 dir)
+    public void Init(float damage, int per, Vector2 dir, Player player)
     {
         this.damage = damage;
         this.per = per;
+        this.player = player;
 
         gameObject.SetActive(true);
 
@@ -54,6 +56,14 @@ public class LongSword : MonoBehaviour
         if (monster != null)
         {
             monster.TakeDamage(damage, Vector2.zero, 0f, 0f);
+        }
+
+        BreakableObject breakable = collision.GetComponent<BreakableObject>();
+
+        if (breakable != null)
+        {
+            breakable.SetPlayer(player);
+            breakable.OnHitByPlayer();
         }
     }
 

@@ -70,14 +70,23 @@ public class SkillData : ScriptableObject, ICSVImportable
 
     private float ToFloat(string s, float defaultValue = 0f)
     {
-        if (string.IsNullOrWhiteSpace(s)) return defaultValue;
-        if (float.TryParse(s, out float v)) return v;
+        if (string.IsNullOrWhiteSpace(s))
+        {
+            return defaultValue;
+        }
+        if (float.TryParse(s, out float v))
+        {
+            return v;
+        }
         return defaultValue;
     }
 
     private bool ToBool(string s)
     {
-        if (string.IsNullOrWhiteSpace(s)) return false;
+        if (string.IsNullOrWhiteSpace(s))
+        {
+            return false;
+        }
         s = s.Trim().ToLower();
         return s == "1" || s == "true" || s == "yes";
     }

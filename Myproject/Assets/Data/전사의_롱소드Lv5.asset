@@ -23,7 +23,7 @@ MonoBehaviour:
   tickInterval: 0
   hasProjectile: 1
   canCritical: 1
-  damagePercent: 2.5
+  damagePercent: 1.5
   range: 0
   level: 5
   projectileCount: 2

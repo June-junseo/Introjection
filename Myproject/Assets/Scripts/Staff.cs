@@ -7,26 +7,29 @@ public class Staff : MonoBehaviour
     private Vector3 direction;
     private float damage;
     private float maxDistance;
+    private Player player;
     private Vector3 startPos;
 
-    public void Init(Transform target, float damage, float speed, float maxDistance)
+    public void Init(Transform target, float damage, float speed, float maxDistance, Player player)
     {
         this.target = target;
         this.damage = damage;
         this.speed = speed;
         this.maxDistance = maxDistance;
+        this.player = player;
 
         startPos = transform.position;
         gameObject.SetActive(true);
     }
 
-    public void Init(Vector3 direction, float damage, float speed, float maxDistance)
+    public void Init(Vector3 direction, float damage, float speed, float maxDistance, Player player)
     {
         this.target = null;
         this.direction = direction.normalized;
         this.damage = damage;
         this.speed = speed;
         this.maxDistance = maxDistance;
+        this.player = player;
 
         startPos = transform.position;
         gameObject.SetActive(true);
@@ -56,6 +59,14 @@ public class Staff : MonoBehaviour
             float knockbackSpeed = 6f;
 
             monster.TakeDamage(damage, knockbackDir, knockbackDistance, knockbackSpeed);
+        }
+
+        BreakableObject breakable = collision.GetComponent<BreakableObject>();
+
+        if (breakable != null)
+        {
+            breakable.SetPlayer(player);
+            breakable.OnHitByPlayer();
         }
     }
 }

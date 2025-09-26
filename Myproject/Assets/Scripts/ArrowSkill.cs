@@ -8,7 +8,6 @@ public class ArrowSkill : ISkill
     private Player player;
     private CharacterStats stats;
 
-    private float baseAttack = 100f;
     private float cooldownTimer = 0f;
 
     public SkillData Data { get; set; }
@@ -67,7 +66,7 @@ public class ArrowSkill : ISkill
                 float angleOffset = (i - (Data.projectileCount - 1) / 2f) * 10f;
                 dir = Quaternion.Euler(0, 0, angleOffset) * dir;
 
-                arrow.Init(dir.normalized, finalDamage, 10f, 10f);
+                arrow.Init(dir.normalized, finalDamage, 10f, 10f, player);
             }
         }
 

@@ -6,6 +6,7 @@ public class DaggerSkill : ISkill
     private Transform parent;
     private Transform skillRoot;
     private CharacterStats stats;
+    private Player player;
 
     private float speed = 250f;
 
@@ -102,16 +103,18 @@ public class DaggerSkill : ISkill
         for (int i = 0; i < Data.projectileCount; i++)
         {
             GameObject daggerObj = pool.Get(Data.id);
+
             if (daggerObj == null)
             {
                 continue;
             }
 
             Dagger dagger = daggerObj.GetComponent<Dagger>();
+
             if (dagger != null)
             {
                 float finalDamage = stats.GetFinalAttack() * Data.damagePercent;
-                dagger.Init(finalDamage, -1, Vector2.zero);
+                dagger.Init(finalDamage, -1, Vector2.zero, player);
             }
 
             daggerObj.transform.SetParent(skillRoot, false);

@@ -90,7 +90,7 @@ public class LongSwordSkill : ISkill
             if (sword != null)
             {
                 float finalDamage = stats.GetFinalAttack() * Data.damagePercent;
-                sword.Init(finalDamage, -1, fireDir);
+                sword.Init(finalDamage, -1, fireDir, player);
             }
         }
     }

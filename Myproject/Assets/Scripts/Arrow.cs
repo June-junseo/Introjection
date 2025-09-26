@@ -8,25 +8,28 @@ public class Arrow : MonoBehaviour
     private float damage;
     private float maxDistance;
     private Vector3 startPos;
+    private Player player;
 
-    public void Init(Transform target, float damage, float speed, float maxDistance)
+    public void Init(Transform target, float damage, float speed, float maxDistance, Player player)
     {
         this.target = target;
         this.damage = damage;
         this.speed = speed;
         this.maxDistance = maxDistance;
+        this.player = player;
 
         startPos = transform.position;
         gameObject.SetActive(true);
     }
 
-    public void Init(Vector3 direction, float damage, float speed, float maxDistance)
+    public void Init(Vector3 direction, float damage, float speed, float maxDistance, Player player)
     {
         this.target = null;
         this.direction = direction.normalized;
         this.damage = damage;
         this.speed = speed;
         this.maxDistance = maxDistance;
+        this.player = player;
 
         startPos = transform.position;
         gameObject.SetActive(true);
@@ -57,6 +60,14 @@ public class Arrow : MonoBehaviour
 
             monster.TakeDamage(damage, knockbackDir, knockbackDistance, knockbackSpeed);
             gameObject.SetActive(false);
+        }
+
+        BreakableObject breakable = collision.GetComponent<BreakableObject>();
+
+        if (breakable != null)
+        {
+            breakable.SetPlayer(player);
+            breakable.OnHitByPlayer();
         }
     }
 }

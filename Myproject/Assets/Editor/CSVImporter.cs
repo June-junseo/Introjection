@@ -57,7 +57,9 @@ public class CSVImporter : EditorWindow
             for (int j = 0; j < row.Length; j++)
             {
                 if (string.IsNullOrEmpty(row[j]))
+                {
                     row[j] = string.Empty;
+                }
             }
 
             ScriptableObject obj = ScriptableObject.CreateInstance(template.GetType());
@@ -83,7 +85,9 @@ public class CSVImporter : EditorWindow
         }
 
         foreach (char c in System.IO.Path.GetInvalidFileNameChars())
+        {
             name = name.Replace(c, '_');
+        }
 
         name = name.Replace(' ', '_');
         name = name.Trim('_');

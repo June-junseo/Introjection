@@ -14,8 +14,13 @@ public class ExpItem : MonoBehaviour
         this.pool = pool;
         isCollected = false;
         gameObject.SetActive(true);
+
         Collider2D col = GetComponent<Collider2D>();
-        if (col != null) col.enabled = true;
+
+        if (col != null)
+        {
+            col.enabled = true;
+        }
     }
 
     private void Update()

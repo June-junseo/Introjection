@@ -71,7 +71,9 @@ public class SkillManager : MonoBehaviour
     public void AddPassiveSkill(PassiveSkillData newPassive)
     {
         if (newPassive == null)
+        {
             return;
+        }
 
         PassiveSkillData existing = passiveSkills.Find(p => p.passiveGroup == newPassive.passiveGroup);
 
@@ -80,17 +82,14 @@ public class SkillManager : MonoBehaviour
             int levelDiff = newPassive.level - existing.level;
             if (levelDiff > 0)
             {
-                // 기존 패시브 교체
                 passiveSkills.Remove(existing);
                 passiveSkills.Add(newPassive);
                 Debug.Log($"패시브 레벨업: {newPassive.skillName} Lv.{newPassive.level}");
             }
-            // 레벨업 후 전체 패시브 재적용
             applier.ApplyAll(passiveSkills.ToArray());
             return;
         }
 
-        // 신규 패시브 추가
         if (newPassive.level == 1)
         {
             passiveSkills.Add(newPassive);
