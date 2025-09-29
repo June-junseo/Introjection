@@ -4,19 +4,27 @@ public static class SkillFactory
 {
     public static ISkill CreateSkill(SkillData data)
     {
+
+        if (data.id == 10001)
+        {
+            return new DisasterSkill();
+        }
+        if(data.id == 10002)
+        {
+            return new CirculationSkill();
+        }
+
         switch (data.skillGroup)
         {
-            case "SWORD": // 롱소드
-                return new LongSwordSkill();
-            case "DAGGER": // 단검
-                return new DaggerSkill();
-            case "STAFF": // 스태프
-                return new StaffSkill();
-            case "BOW": 
-                return new ArrowSkill();
+            case "SWORD": return new LongSwordSkill();
+            case "DAGGER": return new DaggerSkill();
+            case "STAFF": return new StaffSkill();
+            case "BOW": return new ArrowSkill();
+            case "ROSARIO": return new RosarioSkill();
             default:
                 Debug.LogWarning($"Unknown skill type: {data.skillGroup}");
                 return null;
         }
     }
+
 }

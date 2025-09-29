@@ -32,4 +32,3 @@ MonoBehaviour:
   unlockCondition: UNLOCK_CONDITION
   iconPath: ICON_IMAGE
   description: 
-  skillPrefab: {fileID: 0}

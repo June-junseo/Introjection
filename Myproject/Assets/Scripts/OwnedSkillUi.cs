@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,88 +8,91 @@ public class OwnedSkillUi : MonoBehaviour
     public class SkillButtonUi
     {
         public Image icon;
+        public string skillGroup; 
     }
 
     public SkillManager skillManager;
-
-    public SkillButtonUi[] activeSkillSlots; 
+    public SkillButtonUi[] activeSkillSlots;
     public SkillButtonUi[] passiveSkillSlots;
-
-    private void Start()
-    {
-        RefreshOwnedSkills();
-    }
 
     public void RefreshOwnedSkills()
     {
-        var ownedActive = skillManager.GetOwnedActiveSkills();
-
-        for (int i = 0; i < activeSkillSlots.Length; i++)
+        foreach (var slot in activeSkillSlots)
         {
-            if (i < ownedActive.Count)
+            ClearSkillSlot(slot);
+        }
+
+
+        foreach (var skill in skillManager.GetOwnedActiveSkills())
+        {
+
+            var slot = activeSkillSlots.FirstOrDefault(s => s.skillGroup == skill.Data.skillGroup);
+
+            if (slot == null)
             {
-                var skill = ownedActive[i];
-                string iconPath = GetBaseIconPath(skill.Data.skillGroup, true);
-                UpdateSkillSlot(activeSkillSlots[i], iconPath);
+                slot = activeSkillSlots.FirstOrDefault(s => string.IsNullOrEmpty(s.skillGroup));
             }
-            else
+
+            if (slot != null)
             {
-                ClearSkillSlot(activeSkillSlots[i]);
+                slot.skillGroup = skill.Data.skillGroup;
+                UpdateSkillSlot(slot, skill.Data.iconPath);
             }
         }
 
-        var ownedPassive = skillManager.PassiveSkills;
-
-        for (int i = 0; i < passiveSkillSlots.Length; i++)
+        foreach (var slot in passiveSkillSlots)
         {
-            if (i < ownedPassive.Count)
+            ClearSkillSlot(slot);
+        }
+
+        foreach (var p in skillManager.PassiveSkills)
+        {
+            var slot = passiveSkillSlots.FirstOrDefault(s => s.skillGroup == p.passiveGroup);
+
+            if (slot == null)
             {
-                var p = ownedPassive[i];
-                string iconPath = GetBaseIconPath(p.passiveGroup, false);
-                UpdateSkillSlot(passiveSkillSlots[i], iconPath);
+                slot = passiveSkillSlots.FirstOrDefault(s => string.IsNullOrEmpty(s.skillGroup));
             }
-            else
+
+            if (slot != null)
             {
-                ClearSkillSlot(passiveSkillSlots[i]);
+                slot.skillGroup = p.passiveGroup;
+                UpdateSkillSlot(slot, p.iconPath);
             }
         }
     }
 
-    private string GetBaseIconPath(string group, bool isActive)
+    public void ReplaceSkillSlot(string oldGroup, string newGroup, string newIconPath)
     {
-        if (isActive)
+        var slot = activeSkillSlots.FirstOrDefault(s => s.skillGroup == oldGroup);
+
+        if (slot != null)
         {
-            var level1 = skillManager.skillDatas.Find(s => s.skillGroup == group && s.level == 1);
-            if (level1 != null && !string.IsNullOrEmpty(level1.iconPath))
-            {
-                return level1.iconPath;
-            }
+            slot.skillGroup = newGroup;
+            Sprite icon = Resources.Load<Sprite>(newIconPath);
+            slot.icon.sprite = icon != null ? icon : Resources.Load<Sprite>("Icons/DefaultIcon");
+            slot.icon.gameObject.SetActive(true);
+            slot.icon.SetAllDirty();
         }
         else
         {
-            var allPassive = CSVLoader.LoadCSV<PassiveSkillData>(skillManager.passiveCSV);
-
-            var level1 = allPassive.Find(p => p.passiveGroup == group && p.level == 1);
-
-            if (level1 != null && !string.IsNullOrEmpty(level1.iconPath))
-            {
-                return level1.iconPath;
-            }
+            RefreshOwnedSkills();
         }
-
-        return "Icons/DefaultIcon"; 
     }
 
     private void UpdateSkillSlot(SkillButtonUi slot, string iconPath)
     {
         Sprite icon = Resources.Load<Sprite>(iconPath);
         slot.icon.sprite = icon != null ? icon : Resources.Load<Sprite>("Icons/DefaultIcon");
+        slot.icon.SetAllDirty();
         slot.icon.gameObject.SetActive(true);
     }
 
     private void ClearSkillSlot(SkillButtonUi slot)
     {
+        slot.skillGroup = "";
         slot.icon.sprite = Resources.Load<Sprite>("Icons/DefaultIcon");
         slot.icon.gameObject.SetActive(false);
     }
+
 }

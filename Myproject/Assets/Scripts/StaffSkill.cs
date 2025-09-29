@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class StaffSkill : ISkill
 {
+    public SkillData Data { get; set; }
+
     private PoolManager pool;
     private Transform parent;
     private Transform skillRoot;
@@ -9,8 +11,6 @@ public class StaffSkill : ISkill
     private CharacterStats stats;
 
     private float cooldownTimer = 0f;
-
-    public SkillData Data { get; set; }
 
     public void Init(SkillData data, PoolManager pool, Transform parent, CharacterStats stats)
     {
@@ -27,14 +27,15 @@ public class StaffSkill : ISkill
             skillRoot = rootObj.transform;
         }
 
-        cooldownTimer = 0f;
+        player ??= GameObject.FindWithTag("Player")?.GetComponent<Player>();
+        ResetSkill();
     }
 
     public void UpdateSkill()
     {
         if (player == null)
         {
-            player = GameObject.FindWithTag("Player")?.GetComponent<Player>();
+            return;
         }
 
         cooldownTimer -= Time.deltaTime;
@@ -43,32 +44,43 @@ public class StaffSkill : ISkill
             return;
         }
 
-        for (int i = 0; i < Data.projectileCount; i++)
+        int totalCount = stats.GetFinalProjectileCount(Data.projectileCount);
+
+        for (int i = 0; i < totalCount; i++)
         {
             GameObject projObj = pool.Get(Data.id);
-
-            if (projObj == null)
-            {
-                continue;
-            }
+            if (projObj == null) continue;
 
             projObj.transform.SetParent(skillRoot);
             projObj.transform.position = parent.position;
 
-            float finalDamage = stats.GetFinalAttack() * Data.damagePercent;
             Staff staff = projObj.GetComponent<Staff>();
-
             if (staff != null)
             {
                 Vector3 dir = player.GetFacingDirection();
-
                 float angleOffset = (i - (Data.projectileCount - 1) / 2f) * 10f;
                 dir = Quaternion.Euler(0, 0, angleOffset) * dir;
 
-                staff.Init(dir.normalized, finalDamage, 10f, 10f, player);
+                staff.Init(dir.normalized, stats.CalculateDamage(Data.damagePercent), 10f, 10f, player);
             }
         }
 
         cooldownTimer = stats.GetFinalCooldown(Data.cooltime);
+    }
+
+    public void ResetSkill()
+    {
+        cooldownTimer = 0f;
+
+        if (skillRoot != null)
+        {
+            for (int i = skillRoot.childCount - 1; i >= 0; i--)
+            {
+                pool.Release(skillRoot.GetChild(i).gameObject);
+            }
+
+            skillRoot.localPosition = Vector3.zero;
+            skillRoot.localRotation = Quaternion.identity;
+        }
     }
 }

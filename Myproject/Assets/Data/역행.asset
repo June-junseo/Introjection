@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 632a3ea2da9c82b4991f8ad65d6b6498, type: 3}
   m_Name: "\uC5ED\uD589"
   m_EditorClassIdentifier: 
-  id: 2000300137
+  id: 20001
   skillName: "\uC5ED\uD589"
   skillCategory: 2
   cooltime: 0
@@ -30,5 +30,5 @@ MonoBehaviour:
   criticalRate: 0
   statusEffect: 0
   unlockCondition: 
-  iconPath: Icons/Y_shadowstun
+  iconPath: 
   description: 

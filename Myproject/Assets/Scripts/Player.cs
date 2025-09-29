@@ -1,7 +1,8 @@
-﻿using Unity.VisualScripting;
+﻿using System.Collections;
+using Unity.VisualScripting;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
 
 public class Player : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class Player : MonoBehaviour
     private Rigidbody2D rb;
     private SPUM_Prefabs spum;
     private Monster monster;
+    private CharacterStats stats;
 
     [SerializeField]
     private VirtualJoystick joystick;
@@ -32,12 +34,15 @@ public class Player : MonoBehaviour
     private bool isDead = false;
     public int gold = 0;
 
+    private bool levelUpUIOpen = false; 
+
     public SelectSkillUi skillUi;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         spum = GetComponentInChildren<SPUM_Prefabs>();
+        stats = GetComponent<CharacterStats>();
         spumRoot = spum.transform;
 
         level = 1;
@@ -129,7 +134,8 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Vector2 nextVec = vec.normalized * playerSpeed * Time.fixedDeltaTime;
+        float finalSpeed = stats.GetFinalMoveSpeed(); 
+        Vector2 nextVec = vec.normalized * finalSpeed * Time.fixedDeltaTime;
         rb.MovePosition(rb.position + nextVec);
     }
 
@@ -156,12 +162,13 @@ public class Player : MonoBehaviour
 
     public void TakeDamage(float damage)
     {
-        currentHp -= damage;
-        Debug.Log($"플레이어 데미지 입음 {damage}");
+        float finalDamage = stats.ApplyDefense(damage);
+
+        currentHp -= finalDamage;
+        Debug.Log($"플레이어 데미지 입음 {finalDamage}");
+
         spum.PlayAnimation(PlayerState.DAMAGED, 0);
-
         currentHp = Mathf.Clamp(currentHp, 0, maxHp);
-
         onHpBarChanged?.Invoke(currentHp, maxHp);
 
         if (currentHp <= 0)
@@ -169,6 +176,22 @@ public class Player : MonoBehaviour
             Die();
         }
     }
+
+    public void OpenLevelUpUI()
+    {
+        levelUpUIOpen = true;
+        Time.timeScale = 0f;
+    }
+
+    public void CloseLevelUpUI()
+    {
+        levelUpUIOpen = false;
+        if (!isDead)
+        {
+            Time.timeScale = 1f;
+        }
+    }
+
     public void Die()
     {
         if (isDead)
@@ -187,9 +210,10 @@ public class Player : MonoBehaviour
         float animLength = stateInfo.length;
 
         yield return new WaitForSeconds(animLength);
+        if (!levelUpUIOpen)
+        {
+            Time.timeScale = 0f;
+        }
 
-    
-        Time.timeScale = 0f;
-        //게임 오버 처리 여기
     }
 }

@@ -9,6 +9,20 @@ public class GameManager : MonoBehaviour
     private bool gameEnded = false;
 
     public TMP_Text timerText; 
+   
+    public SkillManager skillManager;
+    public OwnedSkillUi ownedSkillUi;
+
+    private void Start()
+    {
+        InitializeGame();
+    }
+
+    private void InitializeGame()
+    {
+        skillManager.InitSkillManager();
+        ownedSkillUi.RefreshOwnedSkills();
+    }
 
     private void Update()
     {

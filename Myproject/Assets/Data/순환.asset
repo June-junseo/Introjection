@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 632a3ea2da9c82b4991f8ad65d6b6498, type: 3}
   m_Name: "\uC21C\uD658"
   m_EditorClassIdentifier: 
-  id: 2000211135
+  id: 10002
   skillName: "\uC21C\uD658"
   skillCategory: 2
   cooltime: 0
@@ -31,4 +31,8 @@ MonoBehaviour:
   statusEffect: 0
   unlockCondition: 
   iconPath: Icons/Skill_340
-  description: 
+  description: "\uC21C\uD658\uC758 \uC774\uCE58\uB97C \uAE68\uB2EC\uC544 \uC601\uC6D0\uD788
+    \uD68C\uC804\uD558\uB294 \uD654\uC5FC\uAD6C\uB97C \uC0DD\uC131\uD55C\uB2E4. \uB370\uBBF8\uC9C0:
+    300% \uAE30\uBCF8 \uD654\uC5FC\uAD6C \uAC1C\uC218: 8"
+  IsEvolutionSkill: 1
+  IsConsumedForEvolution: 0

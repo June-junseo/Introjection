@@ -16,7 +16,10 @@ public class PoolManager : MonoBehaviour
             {
                 foreach (var id in skillIdComp.ids)
                 {
-                    if (!pools.ContainsKey(id)) pools[id] = new List<GameObject>();
+                    if (!pools.ContainsKey(id))
+                    {
+                        pools[id] = new List<GameObject>();
+                    }
                 }
             }
 

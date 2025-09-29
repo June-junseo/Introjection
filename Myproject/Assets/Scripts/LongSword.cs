@@ -52,6 +52,11 @@ public class LongSword : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        BossMonster boss = collision.GetComponent<BossMonster>();
+        if (boss != null)
+        {
+            boss.TakeDamage(damage, Vector2.zero, 0f, 0f);
+        }
         Monster monster = collision.GetComponent<Monster>();
         if (monster != null)
         {

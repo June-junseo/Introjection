@@ -26,6 +26,9 @@ public class SkillData : ScriptableObject, ICSVImportable
     public string iconPath;
     public string description;
 
+    public bool IsEvolutionSkill = false;
+    public bool IsConsumedForEvolution = false;
+
     public void ImportFromCSV(string[] cols)
     {
         id = ToInt(cols[0]);

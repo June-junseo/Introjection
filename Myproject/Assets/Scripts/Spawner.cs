@@ -1,62 +1,70 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Spawner : MonoBehaviour
 {
     public MonsterPool pool;
-    public MonsterDatabase database;
     public Transform player;
 
-    [Header("Normal Monster")]
     public float normalSpawnInterval = 2f;
     private float normalTimer;
 
-    [Header("Elite Monster")]
-    public float eliteSpawnDelay = 90f; 
-    public float eliteSpawnInterval = 90f; 
+    public float eliteSpawnInterval = 90f;
     private float eliteTimer;
-    private bool eliteFirstSpawned = false;
 
-    [Header("Boss Monster")]
-    public float bossSpawnTime = 840f;
-    private float bossTimer;
+    private float gameTimer = 0f;
+
+    private float rushStart = 180f;
+    private float rushInterval = 180f;
+    private int rushCount = 0;
+    public PoolManager poolManager;
+
+    public float bossSpawnTime = 600f;
     private bool bossSpawned = false;
-
-    private void OnEnable()
-    {
-        normalTimer = 0f;
-        eliteTimer = 0f;
-        eliteFirstSpawned = false;
-        bossTimer = 0f;
-        bossSpawned = false;
-    }
+    public GameObject bossPrefab;    
 
     private void Update()
     {
-        normalTimer += Time.deltaTime;
+        float delta = Time.deltaTime;
+        gameTimer += delta;
+        normalTimer += delta;
+        eliteTimer += delta;
+
         if (normalTimer >= normalSpawnInterval)
         {
             normalTimer = 0f;
             SpawnRandomNormal();
         }
 
-        eliteTimer += Time.deltaTime;
-        if (!eliteFirstSpawned && eliteTimer >= eliteSpawnDelay)
-        {
-            eliteFirstSpawned = true;
-            eliteTimer = 0f;
-            SpawnRandomElite();
-        }
-        else if (eliteFirstSpawned && eliteTimer >= eliteSpawnInterval)
+        if (eliteTimer >= eliteSpawnInterval)
         {
             eliteTimer = 0f;
             SpawnRandomElite();
         }
 
-        bossTimer += Time.deltaTime;
-        if (!bossSpawned && bossTimer >= bossSpawnTime)
+        if (gameTimer >= rushStart + rushInterval * rushCount)
+        {
+            rushCount++;
+            StartCoroutine(MonsterRush());
+        }
+
+        if (!bossSpawned && gameTimer >= bossSpawnTime)
         {
             bossSpawned = true;
             SpawnRandomBoss();
+        }
+    }
+
+    private IEnumerator MonsterRush()
+    {
+        int rushCount = 200; 
+        float rushDelay = 0.05f; 
+
+        for (int i = 0; i < rushCount; i++)
+        {
+            SpawnRandomNormal();
+            yield return new WaitForSeconds(rushDelay);
         }
     }
 
@@ -81,21 +89,39 @@ public class Spawner : MonoBehaviour
             return;
         }
 
-        EliteMonsterData data = elites[Random.Range(0, elites.Count)];
+        var nonBossElites = elites.FindAll(m => !m.isBoss);
+        if (nonBossElites.Count == 0)
+        {
+            return;
+        }
+
+        BossMonsterData data = nonBossElites[Random.Range(0, nonBossElites.Count)];
         Vector2 spawnPos = (Vector2)player.position + Random.insideUnitCircle.normalized * 10f;
         pool.Get(data.id, spawnPos);
     }
 
     private void SpawnRandomBoss()
     {
-        var bosses = pool.eliteMonsters;
+        var bosses = pool.bossMonsters;
         if (bosses.Count == 0)
         {
             return;
         }
 
-        EliteMonsterData data = bosses[Random.Range(0, bosses.Count)];
+        BossMonsterData data = bosses[Random.Range(0, bosses.Count)];
         Vector2 spawnPos = (Vector2)player.position + Random.insideUnitCircle.normalized * 10f;
-        pool.Get(data.id, spawnPos);
+
+        GameObject bossObj = pool.Get(data.id, spawnPos);
+        if (bossObj != null)
+        {
+            BossMonster boss = bossObj.GetComponent<BossMonster>();
+            if (boss != null)
+            {
+                boss.Init(data, player.GetComponent<Player>(), poolManager);
+            }
+        }
     }
+
+
+
 }

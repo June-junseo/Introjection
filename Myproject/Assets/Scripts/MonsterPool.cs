@@ -4,7 +4,9 @@ using UnityEngine;
 public class MonsterPool : MonoBehaviour
 {
     public List<NormalMonsterData> normalMonsters;
-    public List<EliteMonsterData> eliteMonsters;
+    public List<BossMonsterData> eliteMonsters; 
+    public List<BossMonsterData> bossMonsters;  
+
 
     public Rigidbody2D playerTarget;
     public PoolManager poolManager;
@@ -83,8 +85,13 @@ public class MonsterPool : MonoBehaviour
 
             var normalData = normalMonsters.Find(m => m.id == id);
             var eliteData = eliteMonsters.Find(m => m.id == id);
+            var bossData = bossMonsters.Find(m => m.id == id);
 
-            GameObject prefab = normalData != null ? normalData.prefab : eliteData.prefab;
+            GameObject prefab = normalData != null ? normalData.prefab
+                             : eliteData != null ? eliteData.prefab
+                             : bossData != null ? bossData.prefab
+                             : null;
+
             obj = Instantiate(prefab);
 
             Monster monster = obj.GetComponent<Monster>();

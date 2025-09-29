@@ -1,7 +1,9 @@
+﻿using LayerLab.CasualGame;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 
 public class SelectSkillUi : MonoBehaviour
 {
@@ -9,6 +11,8 @@ public class SelectSkillUi : MonoBehaviour
     public Button button1, button2, button3;
     public SkillManager skillManager;
     public OwnedSkillUi ownedSkillUi;
+    public GameObject fadePanel;
+    public Player player;
 
     [System.Serializable]
     public class SkillButtonUi
@@ -37,20 +41,22 @@ public class SelectSkillUi : MonoBehaviour
     public void OpenUi()
     {
         uiPanel.SetActive(true);
-        Time.timeScale = 0f;
+        fadePanel.SetActive(true);
+        player.OpenLevelUpUI(); 
         PickSkillsForLevelUp();
     }
 
     public void CloseUi()
     {
         uiPanel.SetActive(false);
-        Time.timeScale = 1f;
+        fadePanel.SetActive(false);
+        player.CloseLevelUpUI();
     }
+
 
     private void PickSkillsForLevelUp()
     {
         selectedForUi.Clear();
-
         List<SkillData> activeCandidates = new List<SkillData>();
         List<PassiveSkillData> passiveCandidates = new List<PassiveSkillData>();
         HashSet<string> usedSkillGroups = new HashSet<string>();
@@ -58,12 +64,36 @@ public class SelectSkillUi : MonoBehaviour
 
         int ownedActiveCount = skillManager.GetOwnedActiveSkills().Count;
         int ownedPassiveCount = skillManager.PassiveSkills.Count;
-
         int maxActive = 3;
         int maxPassive = 5;
 
+        HashSet<string> excludedActiveGroups = new HashSet<string>();
+
+        foreach (var s in skillManager.GetOwnedActiveSkills())
+        {
+            if (s.Data.IsConsumedForEvolution)
+            {
+                excludedActiveGroups.Add(s.Data.skillGroup);
+            }
+        }
+
         foreach (var data in skillManager.skillDatas)
         {
+            if (data.IsEvolutionSkill)
+            {
+                continue;
+            }
+
+            if (skillManager.evolvedSkillGroups.Contains(data.skillGroup))
+            {
+                continue;
+            }
+
+            if (data.IsConsumedForEvolution)
+            {
+                continue;
+            }
+
             var current = skillManager.GetCurrentSkill(data.skillGroup);
             SkillData candidate = null;
 
@@ -107,10 +137,13 @@ public class SelectSkillUi : MonoBehaviour
             }
         }
 
+
         for (int i = 0; i < 3; i++)
         {
             if (activeCandidates.Count == 0 && passiveCandidates.Count == 0)
+            {
                 break;
+            }
 
             bool chooseActive = (Random.value < 0.5f && activeCandidates.Count > 0) || passiveCandidates.Count == 0;
 
@@ -132,9 +165,10 @@ public class SelectSkillUi : MonoBehaviour
         {
             UpdateButton(skillButtons[i], i);
         }
-
-        Debug.Log($"Selected for UI: {selectedForUi.Count} (Active {ownedActiveCount}/{maxActive}, Passive {ownedPassiveCount}/{maxPassive})");
     }
+
+
+
 
     private void UpdateButton(SkillButtonUi btnUi, int index)
     {
@@ -153,39 +187,21 @@ public class SelectSkillUi : MonoBehaviour
 
         if (sel.isActive)
         {
-            text = $"{sel.active.skillName}";
-            dec = $"{sel.active.description}";
-
             if (!string.IsNullOrEmpty(sel.active.iconPath))
             {
                 iconPath = sel.active.iconPath;
             }
-            else
-            {
-                var level1 = skillManager.skillDatas.Find(s => s.skillGroup == sel.active.skillGroup && s.level == 1);
-                if (level1 != null && !string.IsNullOrEmpty(level1.iconPath))
-                {
-                    iconPath = level1.iconPath;
-                }
-            }
+
+            text = sel.active.skillName;
+            dec = sel.active.description;
         }
         else
         {
-            text = $"{sel.passive.skillName}";
-            dec = $"{sel.passive.flavorText}";
-
+            text = sel.passive.skillName;
+            dec = sel.passive.flavorText;
             if (!string.IsNullOrEmpty(sel.passive.iconPath))
             {
                 iconPath = sel.passive.iconPath;
-            }
-            else
-            {
-                var level1 = CSVLoader.LoadCSV<PassiveSkillData>(skillManager.passiveCSV)
-                    .Find(p => p.passiveGroup == sel.passive.passiveGroup && p.level == 1);
-                if (level1 != null && !string.IsNullOrEmpty(level1.iconPath))
-                {
-                    iconPath = level1.iconPath;
-                }
             }
         }
 
@@ -193,19 +209,8 @@ public class SelectSkillUi : MonoBehaviour
         btnUi.DecText.text = dec;
 
         Sprite icon = Resources.Load<Sprite>(iconPath);
-
-        if (icon != null)
-        {
-            btnUi.icon.sprite = icon;
-        }
-        else
-        {
-            Debug.LogWarning($"Icon not found for {text} at path: {iconPath}. Using default icon.");
-            btnUi.icon.sprite = Resources.Load<Sprite>("Icons/DefaultIcon");
-        }
+        btnUi.icon.sprite = icon != null ? icon : Resources.Load<Sprite>("Icons/DefaultIcon");
     }
-
-
 
     private void OnSkillClicked(int index)
     {
@@ -218,7 +223,12 @@ public class SelectSkillUi : MonoBehaviour
 
         if (sel.isActive)
         {
-            skillManager.AddSkill(sel.active);
+            skillManager.ReplaceOrAddSkillByGroup(sel.active.skillGroup, sel.active);
+
+            if (sel.active.IsEvolutionSkill)
+            {
+                skillManager.MarkEvolved(sel.active.skillGroup);
+            }
         }
         else
         {
@@ -228,4 +238,32 @@ public class SelectSkillUi : MonoBehaviour
         ownedSkillUi.RefreshOwnedSkills();
         CloseUi();
     }
+
+
+
+    public void OpenEvolutionUI(SkillData activeSkill, PassiveSkillData passive, SkillEvolutionData evoData)
+    {
+        var evoSkillData = skillManager.skillDatas.Find(s => s.id == evoData.evo_skill_id);
+        if (evoSkillData == null)
+        {
+            return;
+        }
+
+        selectedForUi.Clear();
+        selectedForUi.Add((true, evoSkillData, null));
+        skillButtons[0].button.gameObject.SetActive(true);
+        UpdateButton(skillButtons[0], 0);
+
+        for (int i = 1; i < skillButtons.Length; i++)
+        {
+            skillButtons[i].button.gameObject.SetActive(false);
+        }
+
+        uiPanel.SetActive(true);
+        fadePanel.SetActive(true);
+        player?.OpenLevelUpUI();
+    }
+
+
+
 }

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 632a3ea2da9c82b4991f8ad65d6b6498, type: 3}
   m_Name: "\uD3ED\uC6B0"
   m_EditorClassIdentifier: 
-  id: -2147483648
+  id: 30002
   skillName: "\uD3ED\uC6B0"
   skillCategory: 2
   cooltime: 3
@@ -30,5 +30,5 @@ MonoBehaviour:
   criticalRate: 0.5
   statusEffect: 0
   unlockCondition: 
-  iconPath: Icons/Archerskill_27_shotup
+  iconPath: 
   description: 

@@ -3,7 +3,7 @@ using UnityEngine;
 public class Monster : MonoBehaviour
 {
     private NormalMonsterData normalData;
-    private EliteMonsterData eliteData;
+    private BossMonsterData eliteData;
     private MonsterPool pool;
     private Rigidbody2D rb;
     private Animator animator;
@@ -44,7 +44,7 @@ public class Monster : MonoBehaviour
 
     }
 
-    public void Init(EliteMonsterData data, MonsterPool pool, Rigidbody2D target, PoolManager poolManager)
+    public void Init(BossMonsterData data, MonsterPool pool, Rigidbody2D target, PoolManager poolManager)
     {
         eliteData = data;
         normalData = null;
@@ -91,7 +91,7 @@ public class Monster : MonoBehaviour
     {
         float baseAtk = normalData != null ? normalData.baseAtk : eliteData != null ? eliteData.baseAtk : 1f;
         float elapsedMinutes = (Time.time - spawnTime) / 60f;
-        float growthRate = 0.15f; 
+        float growthRate = 0.15f;
         return baseAtk * (1f + growthRate * elapsedMinutes);
     }
 
@@ -176,7 +176,10 @@ public class Monster : MonoBehaviour
         isDead = true;
 
         animator?.SetTrigger("Dead");
-        if (col != null) col.enabled = false;
+        if (col != null)
+        {
+            col.enabled = false;
+        }
 
         if (normalData != null)
         {
@@ -184,8 +187,7 @@ public class Monster : MonoBehaviour
         }
         else if (eliteData != null)
         {
-            TryDrop_Elite_Exclusive(eliteData.drop1, eliteData.drop1MinCount, eliteData.drop1MaxCount, eliteData.drop2MinCount,
-                                    eliteData.drop2, eliteData.drop2MinCount, eliteData.drop2MaxCount, eliteData.drop2MinCount, player);
+            TryDrop_Elite_Exclusive(eliteData.drop1, eliteData.drop1MinCount, eliteData.drop1MaxCount, eliteData.drop2MinCount, eliteData.drop2, eliteData.drop2MinCount, eliteData.drop2MaxCount, eliteData.drop2MinCount, player);
         }
 
         isKnockback = false;

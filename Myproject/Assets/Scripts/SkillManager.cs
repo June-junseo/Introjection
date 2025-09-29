@@ -1,37 +1,75 @@
+ï»¿using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
+using System.Linq;
 using UnityEngine;
 
 public class SkillManager : MonoBehaviour
 {
     public List<SkillData> skillDatas;
     public TextAsset passiveCSV;
+    public TextAsset evolutionCSV;
+
     public PoolManager pool;
     public CharacterStats stats;
+    public SelectSkillUi selectSkillUi;
+    public OwnedSkillUi ownedSkillUi;
 
     private List<ISkill> skills = new List<ISkill>();
     private List<PassiveSkillData> passiveSkills = new List<PassiveSkillData>();
     private PassiveSkillApplier applier;
+    public SkillEvolutionSystem evolutionSystem;
 
     public List<PassiveSkillData> PassiveSkills => passiveSkills;
+
+    public HashSet<string> evolvedSkillGroups = new HashSet<string>();
+
+    public void MarkEvolved(string skillGroup)
+    {
+        evolvedSkillGroups.Add(skillGroup);
+    }
 
     private void Awake()
     {
         applier = new PassiveSkillApplier(stats);
+
+        if (evolutionCSV != null)
+        {
+            var evoList = CSVLoader.LoadCSV<SkillEvolutionData>(evolutionCSV);
+            evolutionSystem = new SkillEvolutionSystem(evoList);
+        }
+        else
+        {
+            evolutionSystem = new SkillEvolutionSystem(null);
+        }
+    }
+
+    public void InitSkillManager()
+    {
+        foreach (var data in skillDatas)
+        {
+            if (data.level == 1 && data.skillGroup == "SWORD")
+            {
+                ReplaceOrAddSkillByGroup(data.skillGroup, data);
+                break;
+            }
+        }
+
+        ownedSkillUi?.RefreshOwnedSkills();
     }
 
     private void Start()
     {
         foreach (var data in skillDatas)
         {
-            if (data.level == 1 && data.skillGroup == "SWORD") 
+            if (data.level == 1 && data.skillGroup == "SWORD")
             {
-                AddSkill(data);
+                ReplaceOrAddSkillByGroup(data.skillGroup, data);
                 break;
             }
         }
-    }
 
+        ownedSkillUi?.RefreshOwnedSkills();
+    }
 
     private void Update()
     {
@@ -41,6 +79,46 @@ public class SkillManager : MonoBehaviour
         }
     }
 
+    public void ReplaceOrAddSkillByGroup(string skillGroup, SkillData newData)
+    {
+        if (newData == null)
+        {
+            return;
+        }
+
+        var existingSkill = skills.Find(s => s.Data.skillGroup == skillGroup);
+
+        if (existingSkill != null)
+        {
+            existingSkill.ResetSkill();
+            skills.Remove(existingSkill);
+        }
+
+        ISkill newSkill = SkillFactory.CreateSkill(newData);
+        newSkill.Init(newData, pool, transform, stats);
+        skills.Add(newSkill);
+
+        if (ownedSkillUi != null)
+        {
+            var slot = ownedSkillUi.activeSkillSlots.FirstOrDefault(s => s.skillGroup == skillGroup);
+            Sprite icon = Resources.Load<Sprite>(newData.iconPath) ?? Resources.Load<Sprite>("Icons/DefaultIcon");
+
+            if (slot != null)
+            {
+                slot.skillGroup = newData.skillGroup;
+                slot.icon.sprite = icon;
+                slot.icon.gameObject.SetActive(true);
+                slot.icon.SetAllDirty();
+            }
+            else
+            {
+                ownedSkillUi.RefreshOwnedSkills();
+            }
+        }
+
+        Debug.Log($"[SkillManager] ìŠ¤í‚¬ êµì²´/ì¶”ê°€ ì™„ë£Œ: {skillGroup} â†’ {newData.skillName}");
+    }
+
     public void AddSkill(SkillData newSkillData)
     {
         if (newSkillData == null)
@@ -48,12 +126,12 @@ public class SkillManager : MonoBehaviour
             return;
         }
 
-        ISkill existing = skills.Find(s => s.Data != null && s.Data.skillGroup == newSkillData.skillGroup);
+        var existingSkill = skills.Find(s => s.Data.skillGroup == newSkillData.skillGroup);
 
-        if (existing != null)
+        if (existingSkill != null)
         {
-            existing.Init(newSkillData, pool, transform, stats);
-            Debug.Log($"½ºÅ³ ·¹º§¾÷: {newSkillData.skillName} Lv.{newSkillData.level}");
+            ReplaceOrAddSkillByGroup(existingSkill.Data.skillGroup, newSkillData);
+            CheckEvolutionForSingleActive(existingSkill);
             return;
         }
 
@@ -62,10 +140,8 @@ public class SkillManager : MonoBehaviour
             return;
         }
 
-        ISkill skill = SkillFactory.CreateSkill(newSkillData);
-        skill.Init(newSkillData, pool, transform, stats);
-        skills.Add(skill);
-        Debug.Log($"»õ ½ºÅ³ È¹µæ: {newSkillData.skillName} Lv.{newSkillData.level}");
+        ReplaceOrAddSkillByGroup(newSkillData.skillGroup, newSkillData);
+        CheckEvolutionForSingleActive(skills.Last());
     }
 
     public void AddPassiveSkill(PassiveSkillData newPassive)
@@ -75,28 +151,95 @@ public class SkillManager : MonoBehaviour
             return;
         }
 
-        PassiveSkillData existing = passiveSkills.Find(p => p.passiveGroup == newPassive.passiveGroup);
+        var existing = passiveSkills.Find(p => p.passiveGroup == newPassive.passiveGroup);
 
-        if (existing != null)
+        if (existing != null && newPassive.level > existing.level)
         {
-            int levelDiff = newPassive.level - existing.level;
-            if (levelDiff > 0)
-            {
-                passiveSkills.Remove(existing);
-                passiveSkills.Add(newPassive);
-                Debug.Log($"ÆÐ½Ãºê ·¹º§¾÷: {newPassive.skillName} Lv.{newPassive.level}");
-            }
-            applier.ApplyAll(passiveSkills.ToArray());
+            passiveSkills.Remove(existing);
+            passiveSkills.Add(newPassive);
+        }
+        else if (existing == null && newPassive.level == 1)
+        {
+            passiveSkills.Add(newPassive);
+        }
+        else
+        {
+            return; 
+        }
+
+        applier.ApplyAll(passiveSkills.ToArray());
+        CheckAllEvolutions();
+        ownedSkillUi?.RefreshOwnedSkills();
+    }
+
+    private void CheckAllEvolutions()
+    {
+        foreach (var act in skills.ToArray())
+        {
+            CheckEvolutionForSingleActive(act);
+        }
+    }
+
+    public void CheckEvolutionForSingleActive(ISkill activeSkill, bool allowAutomatic = false)
+    {
+        if (activeSkill == null || activeSkill.Data == null || evolutionSystem == null)
+        {
             return;
         }
 
-        if (newPassive.level == 1)
+        foreach (var passive in passiveSkills)
         {
-            passiveSkills.Add(newPassive);
-            applier.ApplyAll(passiveSkills.ToArray());
-            Debug.Log($"»õ ÆÐ½Ãºê È¹µæ: {newPassive.skillName} Lv.{newPassive.level}");
+            if (passive == null)
+            {
+                continue;
+            }
+
+            if (evolutionSystem.TryGetEvolution(activeSkill.Data.id, passive.id, out var evoData))
+            {
+                if (evoData.unlock_condition != 0)
+                {
+                    continue;
+                }
+
+                var evoSkillData = skillDatas.Find(s => s.id == evoData.evo_skill_id);
+                if (evoSkillData == null)
+                {
+                    continue;
+                }
+
+                if (!allowAutomatic)
+                {
+                    selectSkillUi?.OpenEvolutionUI(activeSkill.Data, passive, evoData);
+                }
+            }
         }
     }
+
+    public void ApplyEvolution(ISkill consumedActive, PassiveSkillData consumedPassive, SkillEvolutionData evoData)
+    {
+        if (consumedActive == null || evoData == null)
+        {
+            return;
+        }
+
+        var evoSkillData = skillDatas.Find(s => s.id == evoData.evo_skill_id);
+        if (evoSkillData == null)
+        {
+            return;
+        }
+
+        evoSkillData.IsEvolutionSkill = true;
+
+        foreach (var d in skillDatas.Where(s => s.skillGroup == consumedActive.Data.skillGroup))
+        {
+            d.IsConsumedForEvolution = true;
+        }
+
+        ReplaceOrAddSkillByGroup(consumedActive.Data.skillGroup, evoSkillData);
+    }
+
+
+
 
 
     public SkillData GetCurrentSkill(string skillGroup) =>
@@ -114,19 +257,9 @@ public class SkillManager : MonoBehaviour
             .Find(p => p.passiveGroup == current.passiveGroup && p.level == current.level + 1);
     }
 
-    public List<ISkill> GetOwnedActiveSkills()
-    {
-        return skills; 
-    }
+    public List<ISkill> GetOwnedActiveSkills() => skills;
 
-    public bool CanAddActiveSkill()
-    {
-        return skills.Count < 3;
-    }
+    public bool CanAddActiveSkill() => skills.Count < 3;
 
-    public bool CanAddPassiveSkill()
-    {
-        return passiveSkills.Count < 5;
-    }
-
+    public bool CanAddPassiveSkill() => passiveSkills.Count < 5;
 }

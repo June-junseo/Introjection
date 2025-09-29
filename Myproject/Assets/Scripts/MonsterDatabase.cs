@@ -4,7 +4,7 @@ using UnityEngine;
 public class MonsterDatabase : ScriptableObject
 {
     public NormalMonsterData[] normalMonsters;
-    public EliteMonsterData[] eliteMonsters;
+    public BossMonsterData[] eliteMonsters;
 
     public NormalMonsterData GetNormal(MonsterType type)
     {
@@ -18,7 +18,7 @@ public class MonsterDatabase : ScriptableObject
         return null;
     }
 
-    public EliteMonsterData GetElite(MonsterType type)
+    public BossMonsterData GetElite(MonsterType type)
     {
         foreach (var m in eliteMonsters)
         {

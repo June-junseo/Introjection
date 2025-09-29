@@ -51,6 +51,7 @@ public class Staff : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+      
         Monster monster = collision.GetComponent<Monster>();
         if (monster != null)
         {
@@ -59,6 +60,16 @@ public class Staff : MonoBehaviour
             float knockbackSpeed = 6f;
 
             monster.TakeDamage(damage, knockbackDir, knockbackDistance, knockbackSpeed);
+        }
+
+        BossMonster boss = collision.GetComponent<BossMonster>();
+        if (boss != null)
+        {
+
+            Vector2 knockbackDir = transform.right;
+            float knockbackDistance = 1.2f;
+            float knockbackSpeed = 6f;
+            boss.TakeDamage(damage, knockbackDir, knockbackDistance, knockbackSpeed);
         }
 
         BreakableObject breakable = collision.GetComponent<BreakableObject>();

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 632a3ea2da9c82b4991f8ad65d6b6498, type: 3}
   m_Name: "\uCC9C\uAE30"
   m_EditorClassIdentifier: 
-  id: 2100111136
+  id: 10003
   skillName: "\uCC9C\uAE30"
   skillCategory: 2
   cooltime: 1
@@ -30,5 +30,5 @@ MonoBehaviour:
   criticalRate: 0.5
   statusEffect: 0
   unlockCondition: 
-  iconPath: Icons/wand_shot4
+  iconPath: 
   description: 

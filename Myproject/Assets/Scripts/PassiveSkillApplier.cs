@@ -1,5 +1,5 @@
+using UnityEngine;
 using System.Diagnostics;
-
 
 public class PassiveSkillApplier
 {
@@ -25,7 +25,7 @@ public class PassiveSkillApplier
     {
         switch (passive.affectAbility)
         {
-            case 1: 
+            case 1:
                 stats.attackMultiplier += passive.passiveValue;
                 break;
             case 2: 
@@ -34,7 +34,17 @@ public class PassiveSkillApplier
             case 3: 
                 stats.moveSpeed += passive.passiveValue;
                 break;
+            case 4: 
+                stats.critRate += passive.passiveValue;
+                break;
+            case 5: 
+                stats.defenseRate += passive.passiveValue;
+                break;
+            case 6: 
+                stats.projectileBonus += Mathf.RoundToInt(passive.passiveValue);
+                break;
         }
     }
+
 }
 

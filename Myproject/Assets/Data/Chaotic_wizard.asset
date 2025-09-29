@@ -19,10 +19,12 @@ MonoBehaviour:
   baseAtk: 25
   speed: 1.5
   atkSpeed: 0.7
-  prefab: {fileID: 0}
+  prefab: {fileID: 775442044976728593, guid: da5746660e3f0564e80a56572a68e43a, type: 3}
+  skillData: {fileID: 11400000, guid: 341b2f8d21cd0234e823169e597c2e02, type: 2}
   drop1: Gold
   drop1MaxCount: 250
   drop1MinCount: 250
   drop2: 
   drop2MaxCount: 0
   drop2MinCount: 0
+  isBoss: 1

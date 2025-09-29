@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 [CreateAssetMenu(fileName = "EliteMonsterData", menuName = "Game/Elite Monster Data")]
-public class EliteMonsterData : ScriptableObject, ICSVImportable
+public class BossMonsterData : ScriptableObject, ICSVImportable
 {
     public int id;
     public MonsterType type;
@@ -12,6 +12,7 @@ public class EliteMonsterData : ScriptableObject, ICSVImportable
     public float atkSpeed;
 
     public GameObject prefab;
+    public SkillData skillData;
 
     public string drop1;
     public int drop1MaxCount;
@@ -19,6 +20,8 @@ public class EliteMonsterData : ScriptableObject, ICSVImportable
     public string drop2;
     public int drop2MaxCount;
     public int drop2MinCount;
+
+    public bool isBoss = false;
 
     public void ImportFromCSV(string[] cols)
     {

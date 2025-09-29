@@ -24,7 +24,7 @@ public class AbilityData : ICSVImportable
         affectPassive = int.Parse(row[3]);
         abilityValue = float.Parse(row[4]);
         statLevel = int.Parse(row[5]);
-        baseCost = int.Parse(row[6]);
+        baseCost = int.Parse(row[6]); 
         costGrowth = float.Parse(row[7]);
         unlockCondition = row[8];
         iconImage = row[9];
