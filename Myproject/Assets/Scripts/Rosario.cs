@@ -16,7 +16,7 @@ public class Rosario : MonoBehaviour
         BossMonster boss = collision.GetComponent<BossMonster>();
         if (boss != null)
         {
-            boss.TakeDamage(damage, Vector2.zero, 0f, 0f);
+            boss.TakeDamage(damage);
         }
         Debug.Log($"Rosario Trigger: {collision.name}");
 

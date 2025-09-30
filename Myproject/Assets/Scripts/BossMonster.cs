@@ -10,14 +10,9 @@ public class BossMonster : MonoBehaviour
     private StaffSkill staffSkill;
     private bool isDead = false;
     private float hp;
+    private PoolManager poolManager;
 
-    private bool isKnockback = false;
-    private Vector2 knockbackTarget;
-    private float knockbackSpeed;
-    private float knockbackTolerance = 0.05f;
-    private float knockbackMaxTime = 0.3f;
-    private float knockbackTimer;
-    private Rigidbody2D target;
+    public int damagePopupId = 8002;
 
     private void Awake()
     {
@@ -31,6 +26,7 @@ public class BossMonster : MonoBehaviour
     {
         data = bossData;
         player = playerTarget;
+        this.poolManager = poolManager;
 
         hp = data.baseHp;
 
@@ -41,7 +37,6 @@ public class BossMonster : MonoBehaviour
         staffSkill = new StaffSkill();
         staffSkill.Init(data.skillData, poolManager, transform, player.GetComponent<CharacterStats>());
     }
-
 
     private void Update()
     {
@@ -64,52 +59,47 @@ public class BossMonster : MonoBehaviour
             return;
         }
 
-        if (isKnockback)
-        {
-            HandleKnockback();
-            return; 
-        }
-
         Vector2 dir = (player.transform.position - transform.position).normalized;
         rb.MovePosition(rb.position + dir * data.speed * Time.fixedDeltaTime);
     }
 
-    private void HandleKnockback()
-    {
-        knockbackTimer -= Time.fixedDeltaTime;
-        Vector2 next = Vector2.MoveTowards(rb.position, knockbackTarget, knockbackSpeed * Time.fixedDeltaTime);
-        rb.MovePosition(next);
-
-        if (Vector2.Distance(next, knockbackTarget) <= knockbackTolerance || knockbackTimer <= 0f)
-        {
-            EndKnockback();
-        }
-    }
-
-    private void StartKnockback(Vector2 dir, float distance, float speed)
-    {
-        isKnockback = true;
-        knockbackSpeed = speed;
-        knockbackTarget = (Vector2)transform.position + dir.normalized * distance;
-        knockbackTimer = knockbackMaxTime;
-    }
-
-    private void EndKnockback()
-    {
-        isKnockback = false;
-        rb.linearVelocity = Vector2.zero;
-    }
-
-    public void TakeDamage(float dmg, Vector2 ignoredDir, float knockbackDistance = 1f, float knockbackSpeed = 5f)
+    public void TakeDamage(float dmg)
     {
         hp -= dmg;
-        Vector2 knockbackDir = target != null ? ((Vector2)rb.position - (Vector2)target.position).normalized : ignoredDir;
-        StartKnockback(knockbackDir, knockbackDistance, knockbackSpeed);
 
         if (hp <= 0)
         {
             Die();
         }
+        ShowDamagePopup(dmg);
+    }
+
+    private void ShowDamagePopup(float dmg)
+    {
+        if (poolManager == null)
+        {
+            Debug.LogWarning("PoolManager X");
+            return;
+        }
+
+        GameObject popupObj = poolManager.Get(damagePopupId);
+        if (popupObj == null)
+        {
+            return;
+        }
+
+        GameObject canvasObj = GameObject.FindGameObjectWithTag("Canvas");
+        if (canvasObj == null)
+        {
+            Debug.LogWarning("Canvas X");
+            return;
+        }
+        Canvas canvas = canvasObj.GetComponent<Canvas>();
+        popupObj.transform.SetParent(canvas.transform, false);
+
+        Vector3 worldPos = transform.position + Vector3.up * 0.5f;
+        DamagePopup popup = popupObj.GetComponent<DamagePopup>();
+        popup.Play(dmg.ToString(), Color.red, worldPos, poolManager, damagePopupId);
     }
 
     private void Die()
@@ -121,6 +111,6 @@ public class BossMonster : MonoBehaviour
         isDead = true;
 
         spum.PlayAnimation(PlayerState.DEATH, 0);
-        Destroy(gameObject, 3f);
+        Destroy(gameObject, 3f); 
     }
 }

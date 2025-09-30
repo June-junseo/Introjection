@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 6816535677982503533}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.14, y: 1.05, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 3.58, y: 3.58, z: 3.58}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -129,7 +129,7 @@ MonoBehaviour:
   isElite: 1
   chestPrefab: {fileID: 329928867813557571, guid: 4ddb09ce9470cb84486997a5d1b78c4c, type: 3}
   player: {fileID: 0}
-  expPrefab: {fileID: 4733465319496568917, guid: e5ebfd8ddfa9edf4cb00cf7d3f6181c1, type: 3}
+  damagePopupId: 8002
 --- !u!61 &3024975527278727987
 BoxCollider2D:
   m_ObjectHideFlags: 0

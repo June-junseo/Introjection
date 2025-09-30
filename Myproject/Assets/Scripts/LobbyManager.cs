@@ -1,10 +1,11 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class LobbyManager : MonoBehaviour
 {
     public GameObject characterPrefab;
-    public Transform spawnPoint;      
-    public Vector3 characterScale = Vector3.one * 5f; 
+    public Transform spawnPoint;
+    public Vector3 characterScale = Vector3.one * 5f;
 
     void Start()
     {
@@ -13,5 +14,14 @@ public class LobbyManager : MonoBehaviour
             GameObject character = Instantiate(characterPrefab, spawnPoint.position, spawnPoint.rotation);
             character.transform.localScale = characterScale;
         }
+    }
+    public void EnterGame(string sceneName)
+    {
+        SceneManager.LoadScene("InGameScene");
+    }
+
+    public void ExitGame(string sceneName)
+    {
+        SceneManager.LoadScene("lobbyScene");
     }
 }

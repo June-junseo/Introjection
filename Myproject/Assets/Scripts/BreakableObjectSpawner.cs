@@ -1,25 +1,39 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class BreakableObjectSpawner : MonoBehaviour
 {
-    public PoolManager poolManager;       
-    public int breakablePrefabId;       
-    public int spawnCount = 10;           
-    public Vector2 mapMin;                
-    public Vector2 mapMax;                
-    public Player player;                 
+    public PoolManager poolManager;
+    public int breakablePrefabId;
+    public Vector2 mapMin;
+    public Vector2 mapMax;
+    public Player player;
+
+    public float spawnInterval = 90f;
+    public int minSpawnCount = 5;
+    public int maxSpawnCount = 20;
 
     private List<GameObject> spawnedObjects = new();
 
     private void Start()
     {
-        SpawnBreakables();
+        StartCoroutine(SpawnLoop());
     }
 
-    public void SpawnBreakables()
+    private IEnumerator SpawnLoop()
     {
-        for (int i = 0; i < spawnCount; i++)
+        while (true)
+        {
+            int count = Random.Range(minSpawnCount, maxSpawnCount + 1);
+            SpawnBreakables(count);
+            yield return new WaitForSeconds(spawnInterval);
+        }
+    }
+
+    public void SpawnBreakables(int count)
+    {
+        for (int i = 0; i < count; i++)
         {
             GameObject obj = poolManager.Get(breakablePrefabId);
             obj.transform.position = new Vector3(
@@ -32,7 +46,7 @@ public class BreakableObjectSpawner : MonoBehaviour
             BreakableObject breakable = obj.GetComponent<BreakableObject>();
             if (breakable != null)
             {
-                breakable.SetPlayer(player); 
+                breakable.SetPlayer(player);
             }
 
             spawnedObjects.Add(obj);

@@ -167,7 +167,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 1
-  amount: 10
+  amount: 1
   player: {fileID: 0}
 --- !u!114 &5071704720953066227
 MonoBehaviour:

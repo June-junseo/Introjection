@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class Monster : MonoBehaviour
 {
-    private NormalMonsterData normalData;
-    private BossMonsterData eliteData;
+    public NormalMonsterData normalData;
+    public BossMonsterData eliteData;
     private MonsterPool pool;
     private Rigidbody2D rb;
     private Animator animator;
@@ -91,7 +91,7 @@ public class Monster : MonoBehaviour
         float baseHp = normalData != null ? normalData.baseHp : eliteData != null ? eliteData.baseHp : 1f;
         float elapsedMinutes = (Time.time - spawnTime) / 60f;
         float growthRate = 0.2f; 
-        return baseHp * (1f + growthRate * elapsedMinutes);
+        return baseHp * (2f * growthRate * elapsedMinutes);
     }
 
     private float GetScaledDamage()
@@ -212,6 +212,7 @@ public class Monster : MonoBehaviour
         {
             return;
         }
+
         isDead = true;
 
         animator?.SetTrigger("Dead");
@@ -254,8 +255,7 @@ public class Monster : MonoBehaviour
 
     }
 
-    private void TryDrop_Elite_Exclusive(string drop1, int min1, int max1, float drop1Rate,
-                                         string drop2, int min2, int max2, float drop2Rate, Player player)
+    private void TryDrop_Elite_Exclusive(string drop1, int min1, int max1, float drop1Rate, string drop2, int min2, int max2, float drop2Rate, Player player)
     {
         float r = Random.value;
         float totalRate = Mathf.Clamp01(drop1Rate + drop2Rate);
@@ -319,15 +319,23 @@ public class Monster : MonoBehaviour
         }
         else
         {
-            int id = normalData != null ? normalData.id : eliteData != null ? eliteData.id : 0;
             if (col != null)
             {
                 col.enabled = true;
             }
 
-                pool?.Return(id, gameObject);
+ 
+            if (normalData != null)
+            {
+                pool?.ReturnNormal(normalData.id, this);
+            }
+            else if (eliteData != null)
+            {
+                pool?.ReturnElite(eliteData.id, this);
+            }
         }
     }
+
 
     private void OnTriggerEnter2D(Collider2D collision)
     {

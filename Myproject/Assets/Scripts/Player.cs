@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using Unity.VisualScripting;
 using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
@@ -23,8 +24,9 @@ public class Player : MonoBehaviour
 
     private Transform spumRoot;
 
-    public event System.Action<int, int, int> onExpChanged;
-    public event System.Action<float, float> onHpBarChanged;
+    public event Action<int, int, int> onExpChanged;
+    public event Action<float, float> onHpBarChanged;
+    public event Action onPlayerDied;
 
     private int level = 1;
     private int currentExp = 0;
@@ -34,9 +36,16 @@ public class Player : MonoBehaviour
     private bool isDead = false;
     public int gold = 0;
 
-    private bool levelUpUIOpen = false; 
+    private bool levelUpUIOpen = false;
 
+    public event Action<int, int> onGoldChanged;
     public SelectSkillUi skillUi;
+
+    public void AddGold(int amount)
+    {
+        gold += amount;
+        onGoldChanged?.Invoke(gold, amount);
+    }
 
     private void Awake()
     {
@@ -214,6 +223,8 @@ public class Player : MonoBehaviour
         {
             Time.timeScale = 0f;
         }
+
+        onPlayerDied?.Invoke();
 
     }
 }

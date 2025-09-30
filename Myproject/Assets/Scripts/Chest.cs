@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 public class Chest : MonoBehaviour
 {
@@ -22,7 +23,6 @@ public class Chest : MonoBehaviour
         }
     }
 
-
     private void OpenChest(Player player)
     {
         Debug.Log("OpenChest 호출됨");
@@ -36,6 +36,8 @@ public class Chest : MonoBehaviour
             return;
         }
 
+        List<SkillEvolutionData> evoOptions = new List<SkillEvolutionData>();
+
         foreach (var active in skillMgr.GetOwnedActiveSkills())
         {
             foreach (var passive in skillMgr.PassiveSkills)
@@ -44,18 +46,21 @@ public class Chest : MonoBehaviour
                 {
                     if (evoData.unlock_condition == 0)
                     {
-                        selectUI.OpenEvolutionUI(active.Data, passive, evoData);
-                        Destroy(gameObject, 0.1f);
-                        return;
+                        evoOptions.Add(evoData);
                     }
                 }
             }
         }
 
-        selectUI.OpenUi();
+        if (evoOptions.Count > 0)
+        {
+            selectUI.OpenEvolutionUI(skillMgr.GetOwnedActiveSkills()[0].Data, evoOptions);
+        }
+        else
+        {
+            selectUI.OpenUi();
+        }
+
         Destroy(gameObject, 0.1f);
     }
-
-
-
 }

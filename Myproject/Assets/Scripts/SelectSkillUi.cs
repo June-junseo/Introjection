@@ -241,28 +241,34 @@ public class SelectSkillUi : MonoBehaviour
 
 
 
-    public void OpenEvolutionUI(SkillData activeSkill, PassiveSkillData passive, SkillEvolutionData evoData)
+    public void OpenEvolutionUI(SkillData activeSkill, List<SkillEvolutionData> evoList)
     {
-        var evoSkillData = skillManager.skillDatas.Find(s => s.id == evoData.evo_skill_id);
-        if (evoSkillData == null)
-        {
-            return;
-        }
-
         selectedForUi.Clear();
-        selectedForUi.Add((true, evoSkillData, null));
-        skillButtons[0].button.gameObject.SetActive(true);
-        UpdateButton(skillButtons[0], 0);
 
-        for (int i = 1; i < skillButtons.Length; i++)
+        for (int i = 0; i < skillButtons.Length; i++)
         {
-            skillButtons[i].button.gameObject.SetActive(false);
+            if (i < evoList.Count)
+            {
+                var evoData = evoList[i];
+                var evoSkillData = skillManager.skillDatas.Find(s => s.id == evoData.evo_skill_id);
+                if (evoSkillData != null)
+                {
+                    selectedForUi.Add((true, evoSkillData, null));
+                    skillButtons[i].button.gameObject.SetActive(true);
+                    UpdateButton(skillButtons[i], i);
+                }
+            }
+            else
+            {
+                skillButtons[i].button.gameObject.SetActive(false);
+            }
         }
 
         uiPanel.SetActive(true);
         fadePanel.SetActive(true);
         player?.OpenLevelUpUI();
     }
+
 
 
 

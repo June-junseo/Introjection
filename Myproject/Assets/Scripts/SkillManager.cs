@@ -187,6 +187,8 @@ public class SkillManager : MonoBehaviour
             return;
         }
 
+        List<SkillEvolutionData> evoOptions = new List<SkillEvolutionData>();
+
         foreach (var passive in passiveSkills)
         {
             if (passive == null)
@@ -207,13 +209,16 @@ public class SkillManager : MonoBehaviour
                     continue;
                 }
 
-                if (!allowAutomatic)
-                {
-                    selectSkillUi?.OpenEvolutionUI(activeSkill.Data, passive, evoData);
-                }
+                evoOptions.Add(evoData);
             }
         }
+
+        if (evoOptions.Count > 0 && !allowAutomatic)
+        {
+            selectSkillUi?.OpenEvolutionUI(activeSkill.Data, evoOptions);
+        }
     }
+
 
     public void ApplyEvolution(ISkill consumedActive, PassiveSkillData consumedPassive, SkillEvolutionData evoData)
     {

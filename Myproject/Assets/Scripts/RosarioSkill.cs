@@ -29,7 +29,10 @@ public class RosarioSkill : ISkill
             rosarioObj.transform.localPosition = Vector3.zero;
 
             Rigidbody2D rb = rosarioObj.GetComponent<Rigidbody2D>();
-            if (rb == null) rb = rosarioObj.AddComponent<Rigidbody2D>();
+            if (rb == null)
+            {
+                rb = rosarioObj.AddComponent<Rigidbody2D>();
+            }
             rb.bodyType = RigidbodyType2D.Kinematic;
             rb.simulated = true;
 
@@ -64,14 +67,11 @@ public class RosarioSkill : ISkill
             rosarioCollider.radius = range * 0.5f;
         }
 
-
         if (!rosarioObj.activeSelf)
         {
             rosarioObj.SetActive(true);
         }
     }
-
-
     public void ResetSkill()
     {
         if (rosarioObj != null)

@@ -2,10 +2,12 @@ using UnityEngine;
 
 public class DropItem : MonoBehaviour
 {
-    public enum ItemType { HP, Gold }
+    public enum ItemType { HP, Gold}
     public ItemType type;
-    public int amount = 10;
+    public int hpAmount = 10;
+    public int goldAmount = 1;
     [HideInInspector] public Player player;
+
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -13,18 +15,17 @@ public class DropItem : MonoBehaviour
         {
             if (type == ItemType.HP)
             {
-                player.currentHp += amount;
+                int healAmount = 10;
+                player.currentHp += healAmount;
                 player.currentHp = Mathf.Clamp(player.currentHp, 0, player.maxHp);
-
-                player.Heal(amount);
+                player.Heal(healAmount);
             }
             else if (type == ItemType.Gold)
             {
-                player.gold += amount;
+                player.AddGold(1);
             }
 
             Destroy(gameObject);
         }
     }
-
 }

@@ -15,7 +15,7 @@ MonoBehaviour:
   id: 100510
   type: 0
   monsterName: SLIME1
-  baseHp: 10
+  baseHp: 15
   baseAtk: 5
   speed: 1
   atkSpeed: 0.7

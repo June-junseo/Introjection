@@ -20,7 +20,7 @@ public class Spawner : MonoBehaviour
     private int rushCount = 0;
     public PoolManager poolManager;
 
-    public float bossSpawnTime = 600f;
+    public float bossSpawnTime = 10f;
     private bool bossSpawned = false;
     public GameObject bossPrefab;    
 
@@ -53,6 +53,7 @@ public class Spawner : MonoBehaviour
         {
             bossSpawned = true;
             SpawnRandomBoss();
+            Debug.Log("보스 스폰 시도!");
         }
     }
 
@@ -78,7 +79,7 @@ public class Spawner : MonoBehaviour
 
         NormalMonsterData data = normals[Random.Range(0, normals.Count)];
         Vector2 spawnPos = (Vector2)player.position + Random.insideUnitCircle.normalized * 10f;
-        pool.Get(data.id, spawnPos);
+        Monster normal = pool.GetNormal(data.id, spawnPos);
     }
 
     private void SpawnRandomElite()
@@ -97,30 +98,25 @@ public class Spawner : MonoBehaviour
 
         BossMonsterData data = nonBossElites[Random.Range(0, nonBossElites.Count)];
         Vector2 spawnPos = (Vector2)player.position + Random.insideUnitCircle.normalized * 10f;
-        pool.Get(data.id, spawnPos);
+        Monster elite = pool.GetElite(data.id, spawnPos);
     }
 
     private void SpawnRandomBoss()
     {
         var bosses = pool.bossMonsters;
-        if (bosses.Count == 0)
-        {
-            return;
-        }
+        if (bosses.Count == 0) return;
 
         BossMonsterData data = bosses[Random.Range(0, bosses.Count)];
-        Vector2 spawnPos = (Vector2)player.position + Random.insideUnitCircle.normalized * 10f;
+        Vector3 spawnPos = player.position + (Vector3)(Random.insideUnitCircle.normalized * 10f);
 
-        GameObject bossObj = pool.Get(data.id, spawnPos);
+        BossMonster bossObj = pool.GetBoss(data.id, spawnPos);
         if (bossObj != null)
         {
-            BossMonster boss = bossObj.GetComponent<BossMonster>();
-            if (boss != null)
-            {
-                boss.Init(data, player.GetComponent<Player>(), poolManager);
-            }
+            bossObj.Init(data, player.GetComponent<Player>(), poolManager);
         }
     }
+
+
 
 
 

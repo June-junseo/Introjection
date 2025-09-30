@@ -55,7 +55,7 @@ public class LongSword : MonoBehaviour
         BossMonster boss = collision.GetComponent<BossMonster>();
         if (boss != null)
         {
-            boss.TakeDamage(damage, Vector2.zero, 0f, 0f);
+            boss.TakeDamage(damage);
         }
         Monster monster = collision.GetComponent<Monster>();
         if (monster != null)

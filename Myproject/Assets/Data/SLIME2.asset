@@ -15,9 +15,9 @@ MonoBehaviour:
   id: 80820
   type: 0
   monsterName: SLIME2
-  baseHp: 8
+  baseHp: 10
   baseAtk: 8
-  speed: 2
+  speed: 1.5
   atkSpeed: 0.7
   prefab: {fileID: 593541880334608524, guid: dd9a20d270da90642ad484d1693bc610, type: 3}
   drop1: Exp.Small

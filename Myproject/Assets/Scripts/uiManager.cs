@@ -9,11 +9,19 @@ public class uiManager : MonoBehaviour
     public TextMeshProUGUI levelUpText;
     public Player player;
     public GameManager gameManager;
+    public TextMeshProUGUI goldText;
+    public GameObject gameOverUI;
+
     StringBuilder sb = new StringBuilder();
+    StringBuilder sb2 = new StringBuilder();
 
     private void Start()
     {
         player.onExpChanged += UpdateUi;
+        player.onGoldChanged += UpdateGoldUI;
+        player.onPlayerDied += ShowGameOverUI;
+
+        UpdateGoldUI(player.gold, 0);
     }
 
     private void UpdateUi(int currentExp, int expToLevel, int level)
@@ -25,6 +33,15 @@ public class uiManager : MonoBehaviour
         sb.Append(level);
         levelUpText.text = sb.ToString();
     }
+
+    private void UpdateGoldUI(int currentGold, int addedGold)
+    {
+        sb2.Clear();
+        sb2.Append(currentGold);
+
+        goldText.text = sb2.ToString();
+    }
+
 
     public void OnClickRestart()
     {
@@ -39,5 +56,8 @@ public class uiManager : MonoBehaviour
         player.CheatAddExp(100);
     }
 
-
+    public void ShowGameOverUI()
+    {
+        gameOverUI.SetActive(true);
+    }
 }

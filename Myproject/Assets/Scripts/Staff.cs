@@ -62,15 +62,11 @@ public class Staff : MonoBehaviour
             monster.TakeDamage(damage, knockbackDir, knockbackDistance, knockbackSpeed);
         }
 
-        BossMonster boss = collision.GetComponent<BossMonster>();
-        if (boss != null)
-        {
-
-            Vector2 knockbackDir = transform.right;
-            float knockbackDistance = 1.2f;
-            float knockbackSpeed = 6f;
-            boss.TakeDamage(damage, knockbackDir, knockbackDistance, knockbackSpeed);
-        }
+        //BossMonster boss = collision.GetComponent<BossMonster>();
+        //if (boss != null)
+        //{
+        //    boss.TakeDamage(damage);
+        //}
 
         BreakableObject breakable = collision.GetComponent<BreakableObject>();
 
