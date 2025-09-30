@@ -11,7 +11,7 @@ public class Rosario : MonoBehaviour
         this.player = player;
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerStay2D(Collider2D collision)
     {
         BossMonster boss = collision.GetComponent<BossMonster>();
         if (boss != null)

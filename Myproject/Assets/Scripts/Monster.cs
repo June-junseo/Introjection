@@ -29,6 +29,10 @@ public class Monster : MonoBehaviour
     private PoolManager poolManager;
     private Collider2D col;
 
+    public int damagePopupId = 8002;
+
+
+
     #region Init
     public void Init(NormalMonsterData data, MonsterPool pool, Rigidbody2D target, PoolManager poolManager)
     {
@@ -64,6 +68,9 @@ public class Monster : MonoBehaviour
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         col = GetComponent<Collider2D>();
+
+        GameObject poolObj = GameObject.FindGameObjectWithTag("pool");
+        poolManager = poolObj.GetComponent<PoolManager>();
     }
 
     private void OnEnable()
@@ -112,8 +119,8 @@ public class Monster : MonoBehaviour
             return;
         }
 
+        Vector2 dirVec = target.position - rb.position;
 
-            Vector2 dirVec = target.position - rb.position;
         if (dirVec.sqrMagnitude > 0.01f)
         {
             rb.MovePosition(rb.position + dirVec.normalized * GetSpeed() * Time.fixedDeltaTime);
@@ -165,7 +172,39 @@ public class Monster : MonoBehaviour
         {
             Die(player);
         }
+
+        ShowDamagePopup(dmg);
     }
+
+    private void ShowDamagePopup(float dmg)
+    {
+        if (poolManager == null)
+        {
+            Debug.LogWarning("PoolManager가 설정되지 않았습니다.");
+            return;
+        }
+
+        GameObject popupObj = poolManager.Get(damagePopupId);
+        if (popupObj == null)
+        {
+            return;
+        }
+
+        GameObject canvasObj = GameObject.FindGameObjectWithTag("Canvas");
+        if (canvasObj == null)
+        {
+            Debug.LogWarning("Canvas 태그가 씬에 없습니다.");
+            return;
+        }
+        Canvas canvas = canvasObj.GetComponent<Canvas>();
+        popupObj.transform.SetParent(canvas.transform, false);
+
+        Vector3 worldPos = transform.position + Vector3.up * 0.5f;
+        DamagePopup popup = popupObj.GetComponent<DamagePopup>();
+        popup.Play(dmg.ToString(), Color.red, worldPos, poolManager, damagePopupId);
+    }
+
+
 
     private void Die(Player player)
     {

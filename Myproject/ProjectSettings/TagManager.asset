@@ -8,6 +8,8 @@ TagManager:
   - Ground
   - Area
   - Monster
+  - pool
+  - Canvas
   layers:
   - Default
   - TransparentFX
@@ -50,6 +52,9 @@ TagManager:
     locked: 0
   - name: element
     uniqueID: 2604811099
+    locked: 0
+  - name: DamagePopup
+    uniqueID: 3225112499
     locked: 0
   m_RenderingLayers:
   - Default
